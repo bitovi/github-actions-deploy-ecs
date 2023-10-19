@@ -1,0 +1,311 @@
+name: 'Deploy ECS Cluster'
+description: 'Deploy an AWS ECS Cluster with service, task and ALB definitions.'
+branding:
+  icon: upload-cloud
+  color: red
+inputs:
+  # AWS Specific
+  aws_access_key_id:
+    description: 'AWS access key ID'
+    required: false
+  aws_secret_access_key:
+    description: 'AWS secret access key'
+    required: false
+  aws_session_token:
+    description: 'AWS session token'
+    required: false
+  aws_default_region:
+    description: 'AWS default region'
+    default: us-east-1
+    required: false
+  aws_resource_identifier:
+    description: 'Set to override the AWS resource identifier for the deployment.  Defaults to `${org}-{repo}-{branch}`.  Use with destroy to destroy specific resources.'
+    required: false
+  aws_additional_tags:
+    description: 'A JSON object of additional tags that will be included on created resources. Example: `{"key1": "value1", "key2": "value2"}`'
+    required: false
+
+  # Configuration
+  checkout:
+    description: 'Specifies if this action should checkout the code'
+    required: false
+    default: 'true'
+  bitops_code_only:
+    description: 'Will run only the generation phase of BitOps, where the Terraform and Ansible code is built.'
+    required: false
+  bitops_code_store:
+    description: 'Store BitOps code as a GitHub artifact'
+    required: false
+  tf_stack_destroy:
+    description: 'Set to "true" to Destroy the stack through Terraform.'
+    required: false
+  tf_state_file_name:
+    description: 'Change this to be anything you want to. Carefull to be consistent here. A missing file could trigger recreation, or stepping over destruction of non-defined objects.'
+    required: false
+  tf_state_file_name_append:
+    description: 'Append a string to the tf-state-file. Setting this to `unique` will generate `tf-state-aws-unique`. Can co-exist with the tf_state_file_name variable. '
+    required: false
+  tf_state_bucket:
+    description: 'AWS S3 bucket to use for Terraform state. Defaults to `${org}-${repo}-{branch}-tf-state`'
+    required: false
+  tf_state_bucket_destroy:
+    description: 'Force purge and deletion of S3 bucket defined. Any file contained there will be destroyed. `tf_stack_destroy` must also be `true`'
+    required: false
+
+  # AWS_ECS
+  aws_ecs_enable:
+    description: 'Toggle ECS Creation'
+    required: false
+  aws_ecs_service_name:
+    description: 'Elastic Container Service name'
+    required: false
+  aws_ecs_cluster_name:
+    description: 'Elastic Container Service cluster name'
+    required: false
+  aws_ecs_service_launch_type:
+    description: 'Configuration type. Could be EC2, FARGATE or EXTERNAL'
+    required: false
+  aws_ecs_task_type:
+    description: 'Configuration type. Could be EC2, FARGATE or empty. Will default to aws_ecs_service_launch_type if none defined. (Blank if EXTERNAL)'
+    required: false
+  aws_ecs_task_name:
+    description: 'Elastic Container Service task name'
+    required: false
+  aws_ecs_task_execution_role:
+    description: 'Elastic Container Service task execution role name from IAM. Defaults to "ecsTaskExecutionRole"'
+    required: false
+  aws_ecs_task_json_definition_file:
+    description: 'Name of the json file containing task definition. Overrides every other input.'
+    required: false
+  aws_ecs_task_network_mode:
+    description: 'Network type to use in task definition'
+    required: false
+  aws_ecs_task_cpu:
+    description: 'Task CPU Amount'
+    required: false
+  aws_ecs_task_mem:
+    description: 'Task Mem Amount'
+    required: false
+  aws_ecs_container_cpu:
+    description: 'Container CPU Amount'
+    required: false
+  aws_ecs_container_mem:
+    description: 'Container Mem Amount'
+    required: false
+  aws_ecs_node_count:
+    description: 'Node count for ECS Cluster'
+    required: false
+  aws_ecs_app_image:
+    description: 'Name of the image to be used'
+    required: false
+  aws_ecs_security_group_name:
+    description: 'ECS Secruity group name'
+    required: false
+  aws_ecs_assign_public_ip:
+    description: 'Assign public IP to node'
+    required: false
+  aws_ecs_container_port:
+    description: 'Comma separated list of container ports'
+    required: false
+  aws_ecs_lb_port:
+    description: 'Comma serparated list of ports exposed by the load balancer'
+    required: false
+  aws_ecs_lb_redirect_enable:
+    description: 'Toggle redirect from HTTP and/or HTTPS to the main port.'
+    required: false
+  aws_ecs_lb_container_path:
+    description: 'Path for subsequent deployed images. eg. api.'
+    required: false
+  aws_ecs_autoscaling_enable:
+    description: 'Toggle ecs autoscaling policy'
+    required: false
+  aws_ecs_autoscaling_max_nodes:
+    description: 'Max ammount of nodes to scale up to.'
+    required: false
+  aws_ecs_autoscaling_min_nodes:
+    description: 'Min ammount of nodes to scale down to.'
+    required: false
+  aws_ecs_autoscaling_max_mem:
+    description: 'Max ammount of mem to scale up to.'
+    required: false
+  aws_ecs_autoscaling_max_cpu:
+    description: 'Max ammount of cou to scale up to.'
+    required: false
+  aws_ecs_cloudwatch_enable:
+    description: "Toggle cloudwatch for ECS. Default 'false'"
+    reuired: false
+  aws_ecs_cloudwatch_lg_name:
+    description: "Log group name. Will default to aws_identifier if none."
+    reuired: false
+  aws_ecs_cloudwatch_skip_destroy:
+    description: "Toggle deletion or not when destroying the stack."
+    reuired: false
+  aws_ecs_cloudwatch_retention_days:
+    description: "Number of days to retain logs. 0 to never expire. Default '14'"
+    reuired: false
+  aws_ecs_additional_tags:
+    description: 'A list of strings that will be added to created resources'
+    required: false
+
+  # ENV files
+  env_aws_secret:
+    description: 'Secret name to pull env variables from AWS Secret Manager'
+    required: false
+  env_repo:
+    description: 'File containing environment variables to be used with the app'
+    required: false
+  env_ghs:
+    description: '`.env` file to be used with the app from Github secrets'
+    required: false
+  env_ghv:
+    description: '`.env` file to be used with the app from Github variables'
+    required: false
+
+
+  # AWS VPC Inputs
+  aws_vpc_create:
+    description: 'Define if a VPC should be created'
+    required: false
+  aws_vpc_name:
+    description: 'Set a specific name for the VPC'
+    required: false
+  aws_vpc_cidr_block:
+    description: 'Define Base CIDR block which is divided into subnet CIDR blocks. Defaults to 10.0.0.0/16.'
+    required: false
+  aws_vpc_public_subnets:
+    description: 'Comma separated list of public subnets. Defaults to 10.10.110.0/24'
+    required: false
+  aws_vpc_private_subnets:
+    description: 'Comma separated list of private subnets. If none, none will be created.'
+    required: false
+  aws_vpc_availability_zones:
+    description: 'Comma separated list of availability zones. Defaults to `aws_default_region.'
+    required: false
+  aws_vpc_id:
+    description: 'AWS VPC ID. Accepts `vpc-###` values.'
+    required: false
+  aws_vpc_subnet_id:
+    description: 'Specify a Subnet to be used with the instance. If none provided, will pick one.'
+    required: false
+  aws_vpc_additional_tags:
+    description: 'A JSON object of additional tags that will be included on created resources. Example: `{"key1": "value1", "key2": "value2"}`'
+    required: false
+
+  # AWS Route53 Domains abd Certificates
+  aws_r53_enable:
+    description: 'Enables the usage of Route53 to manage DNS records.'
+    required: false
+  aws_r53_domain_name:
+    description: 'Define the root domain name for the application. e.g. app.com'
+    required: false
+  aws_r53_sub_domain_name:
+    description: 'Define the sub-domain part of the URL. Defaults to `${org}-${repo}-{branch}`'
+  aws_r53_root_domain_deploy:
+    description: 'Deploy to root domain. Will generate two DNS recrods, one for root, another for www'
+    required: false
+  aws_r53_enable_cert:
+    description: 'Makes the application use a certificate by enabling a certificate lookup.'
+    required: false
+  aws_r53_cert_arn:
+    description: 'Define the certificate ARN to use for the application'
+    required: false
+  aws_r53_create_root_cert:
+    description: 'Generates and manage the root cert for the application'
+    required: false
+  aws_r53_create_sub_cert: 
+    description: 'Generates and manage the sub-domain certificate for the application'
+    required: false
+  aws_r53_additional_tags:
+    description: 'A JSON object of additional tags that will be included on created resources. Example: `{"key1": "value1", "key2": "value2"}`'
+    required: false
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Deploy with BitOps
+      id: deploy
+      uses: bitovi/github-actions-commons@main
+      with:
+        # Current repo vars
+        gh_action_repo: ${{ github.action_path }}
+
+        # AWS
+        aws_access_key_id: ${{ inputs.aws_access_key_id }}
+        aws_secret_access_key: ${{ inputs.aws_secret_access_key }}
+        aws_session_token: ${{ inputs.aws_session_token }}
+        aws_default_region: ${{ inputs.aws_default_region }}
+        aws_resource_identifier: ${{ inputs.aws_resource_identifier }}
+        aws_additional_tags: ${{ inputs.aws_additional_tags }}
+
+        # Configuration
+
+        checkout: ${{ inputs.checkout }}
+        bitops_code_only: ${{ inputs.bitops_code_only }}
+        bitops_code_store: ${{ inputs.bitops_code_store }}
+        tf_stack_destroy: ${{ inputs.tf_stack_destroy }}
+        tf_state_file_name: ${{ inputs.tf_state_file_name }}
+        tf_state_file_name_append: ${{ inputs.tf_state_file_name_append }}
+        tf_state_bucket: ${{ inputs.tf_state_bucket }}
+        tf_state_bucket_destroy: ${{ inputs.tf_state_bucket_destroy }}
+
+        # ECS
+        aws_ecs_enable: ${{ inputs.aws_ecs_enable }}
+        aws_ecs_service_name: ${{ inputs.aws_ecs_service_name }}
+        aws_ecs_cluster_name: ${{ inputs.aws_ecs_cluster_name }}
+        aws_ecs_service_launch_type: ${{ inputs.aws_ecs_service_launch_type }}
+        aws_ecs_task_type: ${{ inputs.aws_ecs_task_type }}
+        aws_ecs_service_launch_type: ${{ inputs.aws_ecs_service_launch_type }}
+        aws_ecs_task_name: ${{ inputs.aws_ecs_task_name }}
+        aws_ecs_task_execution_role: ${{ inputs.aws_ecs_task_execution_role }}
+        aws_ecs_task_json_definition_file: ${{ inputs.aws_ecs_task_json_definition_file }}
+        aws_ecs_task_network_mode: ${{ inputs.aws_ecs_task_network_mode }}
+        aws_ecs_task_cpu: ${{ inputs.aws_ecs_task_cpu }}
+        aws_ecs_task_mem: ${{ inputs.aws_ecs_task_mem }}
+        aws_ecs_container_cpu: ${{ inputs.aws_ecs_container_cpu }}
+        aws_ecs_container_mem: ${{ inputs.aws_ecs_container_mem }}
+        aws_ecs_node_count: ${{ inputs.aws_ecs_node_count }}
+        aws_ecs_app_image: ${{ inputs.aws_ecs_app_image }}
+        aws_ecs_security_group_name: ${{ inputs.aws_ecs_security_group_name }}
+        aws_ecs_assign_public_ip: ${{ inputs.aws_ecs_assign_public_ip }}
+        aws_ecs_container_port: ${{ inputs.aws_ecs_container_port }}
+        aws_ecs_lb_port: ${{ inputs.aws_ecs_lb_port }}
+        aws_ecs_lb_redirect_enable: ${{ inputs.aws_ecs_lb_redirect_enable }}
+        aws_ecs_lb_container_path: ${{ inputs.aws_ecs_lb_container_path }}
+        aws_ecs_autoscaling_enable: ${{ inputs.aws_ecs_autoscaling_enable }}
+        aws_ecs_autoscaling_max_nodes: ${{ inputs.aws_ecs_autoscaling_max_nodes }}
+        aws_ecs_autoscaling_min_nodes: ${{ inputs.aws_ecs_autoscaling_min_nodes }}
+        aws_ecs_autoscaling_max_mem: ${{ inputs.aws_ecs_autoscaling_max_mem }}
+        aws_ecs_autoscaling_max_cpu: ${{ inputs.aws_ecs_autoscaling_max_cpu }}
+        aws_ecs_cloudwatch_enable: ${{ inputs.aws_ecs_cloudwatch_enable }}
+        aws_ecs_cloudwatch_lg_name: ${{ inputs.aws_ecs_cloudwatch_lg_name }}
+        aws_ecs_cloudwatch_skip_destroy: ${{ inputs.aws_ecs_cloudwatch_skip_destroy }}
+        aws_ecs_cloudwatch_retention_days: ${{ inputs.aws_ecs_cloudwatch_retention_days }}
+        aws_ecs_additional_tags: ${{ inputs.aws_ecs_additional_tags }}
+
+        # ENV files
+        env_aws_secret: ${{inputs.env_aws_secret }}
+        env_repo: ${{inputs.env_repo }}
+        env_ghs: ${{inputs.env_ghs }}
+        env_ghv: ${{inputs.env_ghv }}
+
+       # AWS VPC Inputs
+        aws_vpc_create: ${{inputs.aws_vpc_create }}
+        aws_vpc_name: ${{inputs.aws_vpc_name }}
+        aws_vpc_cidr_block: ${{inputs.aws_vpc_cidr_block }}
+        aws_vpc_public_subnets: ${{inputs.aws_vpc_public_subnets }}
+        aws_vpc_private_subnets: ${{inputs.aws_vpc_private_subnets }}
+        aws_vpc_availability_zones: ${{inputs.aws_vpc_availability_zones }}
+        aws_vpc_id: ${{inputs.aws_vpc_id }}
+        aws_vpc_subnet_id: ${{inputs.aws_vpc_subnet_id }}
+        aws_vpc_additional_tags: ${{inputs.aws_vpc_additional_tags }}
+
+        # AWS Route53 Domains abd Certificates
+        aws_r53_enable: ${{inputs.aws_r53_enable }}
+        aws_r53_domain_name: ${{inputs.aws_r53_domain_name }}
+        aws_r53_sub_domain_name: ${{inputs.aws_r53_sub_domain_name }}
+        aws_r53_root_domain_deploy: ${{inputs.aws_r53_root_domain_deploy }}
+        aws_r53_enable_cert: ${{inputs.aws_r53_enable_cert }}
+        aws_r53_cert_arn: ${{inputs.aws_r53_cert_arn }}
+        aws_r53_create_root_cert: ${{inputs.aws_r53_create_root_cert }}
+        aws_r53_create_sub_cert: ${{inputs.aws_r53_create_sub_cert }}
+        aws_r53_additional_tags: ${{inputs.aws_r53_additional_tags }}
