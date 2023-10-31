@@ -1,5 +1,5 @@
-name: 'Deploy ECS Cluster'
-description: 'Deploy an AWS ECS Cluster with service, task and ALB definitions.'
+name: 'Deploy an AWS ECS Cluster.'
+description: 'Deploys an Amazon ECS Cluster with service, task and ALB definitions, even DNS with cert (If in Route53).'
 branding:
   icon: upload-cloud
   color: red
@@ -224,7 +224,7 @@ runs:
   steps:
     - name: Deploy with BitOps
       id: deploy
-      uses: bitovi/github-actions-commons@main
+      uses: bitovi/github-actions-commons@v0.0.7
       with:
         # Current repo vars
         gh_action_repo: ${{ github.action_path }}

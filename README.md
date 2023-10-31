@@ -1,18 +1,22 @@
-# Deploy AWS ECS Cluster
+# Deploy an AWS ECS Cluster
 
 `bitovi/github-actions-deploy-ecs` Deploys a ECS Cluster.
 
 This action uses the new GitHub Actions Commons, that is used by many Bitovi GitHub Actions, and so it's constantly evolving and improving.
 
 
-## You are here
-With this action, you can create your ECS (Fargate or EC2) cluster, with tasks and service definitions in a matter of minutes. 
+## Action Summary
+With this action, you can create your ECS (Fargate or EC2) cluster, with tasks and service definitions in a matter of minutes! With an ALB, DNS and even Certificate (if in Route53)
 
 If you would like to deploy a backend app/service, check out our other actions:
 | Action | Purpose |
 | ------ | ------- |
-| [Deploy Docker to EC2](https://github.com/bitovi/github-actions-deploy-docker-to-ec2) | Deploys a repo with a Dockerized application to a virtual machine (EC2) on AWS |
-| [Deploy static site to AWS (S3/CDN/R53](https://github.com/marketplace/actions/deploy-static-site-to-aws-s3-cdn-r53) | Hosts a static site in AWS S3 with CloudFront |
+| [Deploy Docker to EC2](https://github.com/marketplace/actions/deploy-docker-to-aws-ec2) | Deploys a repo with a Dockerized application to a virtual machine (EC2) on AWS |
+| [Deploy React to GitHub Pages](https://github.com/marketplace/actions/deploy-react-to-github-pages) | Builds and deploys a React application to GitHub Pages. |
+| [Deploy static site to AWS (S3/CDN/R53)](https://github.com/marketplace/actions/deploy-static-site-to-aws-s3-cdn-r53) | Hosts a static site in AWS S3 with CloudFront |
+<br/>
+
+**And more!**, check our [list of actions in the GitHub marketplace](https://github.com/marketplace?category=&type=actions&verification=&query=bitovi)
 
 # Need help or have questions?
 This project is supported by [Bitovi, A DevOps consultancy](https://www.bitovi.com/services/devops-consulting).
@@ -37,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Create an ECS-Fargate deploy
-      uses: bitovi/github-actions-deploy-ecs@v0.1.0
+      uses: bitovi/github-actions-deploy-ecs@v0.1.1
       with:
         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID_SANDBOX }}
         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_SANDBOX }}
