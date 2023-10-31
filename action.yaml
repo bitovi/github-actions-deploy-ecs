@@ -1,4 +1,4 @@
-name: 'Deploy an AWS ECS Cluster.'
+name: 'Deploy an AWS ECS Cluster'
 description: 'Deploys an Amazon ECS Cluster with service, task and ALB definitions, even DNS with cert (If in Route53).'
 branding:
   icon: upload-cloud
