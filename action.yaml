@@ -254,7 +254,6 @@ runs:
         aws_ecs_cluster_name: ${{ inputs.aws_ecs_cluster_name }}
         aws_ecs_service_launch_type: ${{ inputs.aws_ecs_service_launch_type }}
         aws_ecs_task_type: ${{ inputs.aws_ecs_task_type }}
-        aws_ecs_service_launch_type: ${{ inputs.aws_ecs_service_launch_type }}
         aws_ecs_task_name: ${{ inputs.aws_ecs_task_name }}
         aws_ecs_task_execution_role: ${{ inputs.aws_ecs_task_execution_role }}
         aws_ecs_task_json_definition_file: ${{ inputs.aws_ecs_task_json_definition_file }}
