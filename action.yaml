@@ -224,7 +224,7 @@ runs:
   steps:
     - name: Deploy with BitOps
       id: deploy
-      uses: bitovi/github-actions-commons@v0.0.7
+      uses: bitovi/github-actions-commons@add-policy-creation-to-ecs
       with:
         # Current repo vars
         gh_action_repo: ${{ github.action_path }}
