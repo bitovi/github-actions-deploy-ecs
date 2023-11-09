@@ -100,6 +100,8 @@ jobs:
         aws_ecs_lb_redirect_enable: true
         aws_ecs_lb_container_path: 'apache,unit'
 
+        aws_ecs_additional_tags: '{\"key\":\"value\",\"key2\":\"value2\"}'
+
         aws_ecs_cloudwatch_enable: true
         aws_ecs_cloudwatch_lg_name: nginx-leo
         aws_ecs_cloudwatch_skip_destroy: false
@@ -276,4 +278,4 @@ The scripts and documentation in this project are released under the [MIT Licens
 [Bitovi](https://www.bitovi.com/) is a proud supporter of Open Source software.
 
 # We want to hear from you.
-Come chat with us about open source in our Bitovi community [Discord](https://discord.gg/J7ejFsZnJ4Z!
+Come chat with us about open source in our Bitovi community [Discord](https://discord.gg/J7ejFsZnJ4Z)!
