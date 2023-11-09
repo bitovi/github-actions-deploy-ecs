@@ -219,12 +219,21 @@ inputs:
     description: 'A JSON object of additional tags that will be included on created resources. Example: `{"key1": "value1", "key2": "value2"}`'
     required: false
 
+outputs:
+  # ECS
+  ecs_load_balancer_dns:
+    description: "ECS ALB DNS Record"
+    value: ${{ steps.deploy.outputs.ecs_load_balancer_dns }}
+  ecs_dns_record:
+    description: "ECS DNS URL"
+    value: ${{ steps.deploy.outputs.ecs_dns_record }}
+    
 runs:
   using: 'composite'
   steps:
     - name: Deploy with BitOps
       id: deploy
-      uses: bitovi/github-actions-commons@v0.0.7
+      uses: bitovi/github-actions-commons@v0.0.9
       with:
         # Current repo vars
         gh_action_repo: ${{ github.action_path }}
