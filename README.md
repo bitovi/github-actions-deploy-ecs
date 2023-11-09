@@ -38,7 +38,7 @@ on:
   push:
     branches: [ main ]
 jobs:
-  deploy:
+  deploy-ecs:
     runs-on: ubuntu-latest
     - name: Create Nginx example
       uses: bitovi/github-actions-deploy-ecs@v0.1.2
@@ -49,7 +49,7 @@ jobs:
         aws_default_region: us-east-1
 
         #tf_stack_destroy: true # This is to destroy the stack
-        tf_state_bucket_destroy: true
+        tf_state_bucket_destroy: true # Will only destroy the bucket if tf_stack_destroy is true
 
         aws_ecs_task_cpu: 256
         aws_ecs_task_mem: 512
@@ -73,7 +73,7 @@ on:
   push:
     branches: [ main ]
 jobs:
-  deploy-bucket-only:
+  deploy-ecs:
     runs-on: ubuntu-latest
     environment: 
       name: full-stack
@@ -90,15 +90,16 @@ jobs:
         #tf_stack_destroy: true
         tf_state_bucket_destroy: true
 
-        aws_ecs_task_cpu: 256,512,512
-        aws_ecs_task_mem: 512,1024,1024
+        # Each comma separated value is for each consecutive container
+        aws_ecs_task_cpu: 256,512,512 
+        aws_ecs_task_mem: 512,1024,1024 
         aws_ecs_app_image: nginx:latest,httpd:latest,public.ecr.aws/nginx/unit
         aws_ecs_assign_public_ip: true
 
         aws_ecs_container_port: 80,80,80
         aws_ecs_lb_port: 8000,8001,8082
         aws_ecs_lb_redirect_enable: true
-        aws_ecs_lb_container_path: 'apache,unit'
+        aws_ecs_lb_container_path: 'apache,unit' # Fisrt container will be the URL root path
 
         aws_ecs_additional_tags: '{\"key\":\"value\",\"key2\":\"value2\"}'
 
