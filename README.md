@@ -27,42 +27,92 @@ You can **get help or ask questions** on our:
 
 Or, you can hire us for training, consulting, or development. [Set up a free consultation](https://www.bitovi.com/services/devops-consulting).
 
-# Basic Use
-
+# Example usage
 For basic usage, create `.github/workflows/deploy.yaml` with the following to build on push.
+
+## Basic Use - One container only
+One container, exposed in the port 8000, mapped to container port 80. Will return the load balancer URL.
 ```yaml
-name: Deploy ECS
+name: Deploy ECS Cluster
 on:
   push:
     branches: [ main ]
-
 jobs:
-  deploy-ecs:
+  deploy:
     runs-on: ubuntu-latest
-    steps:
-    - name: Create an ECS-Fargate deploy
-      uses: bitovi/github-actions-deploy-ecs@v0.1.1
+    - name: Create Nginx example
+      uses: bitovi/github-actions-deploy-ecs@v0.1.2
+      id: ecs
       with:
-        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID_SANDBOX }}
-        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_SANDBOX }}
+        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws_default_region: us-east-1
 
-        aws_ecs_enable: true
-        aws_ecs_task_cpu: 1024,2048
-        aws_ecs_task_mem: 2048,6144
-        aws_ecs_app_image: some.dkr.ecr.us-east-1.amazonaws.com/repo:fe,some.dkr.ecr.us-east-1.amazonaws.com/repo:be
+        #tf_stack_destroy: true # This is to destroy the stack
+        tf_state_bucket_destroy: true
+
+        aws_ecs_task_cpu: 256
+        aws_ecs_task_mem: 512
+        aws_ecs_app_image: nginx:latest
         aws_ecs_assign_public_ip: true
-        aws_ecs_container_port: 3000,3001
+
+        aws_ecs_container_port: 80
+        aws_ecs_lb_port: 8000
+```
+
+## Advanced Use - 3 Containers, different paths
+
+The example below will create a cluster with 3 tasks, with cloudwatch enabled and DNS usage. 
+You'll end up with the following URL -> https://subdomain.your-domain.com
+Mapping the 2nd and 3rd container to https://subdomain.your-domain.com/apache/ and https://subdomain.your-domain.com/unit/ (Usefull for FE/BE and something extra)
+(Keep in mind the apache container will print a 404 as that path doesn't exist in it.)
+
+```yaml
+name: Deploy ECS Cluster Advanced
+on:
+  push:
+    branches: [ main ]
+jobs:
+  deploy-bucket-only:
+    runs-on: ubuntu-latest
+    environment: 
+      name: full-stack
+      url: ${{ steps.ecs.outputs.ecs_dns_record }}
+    steps:
+    - name: Create Nginx example
+      uses: bitovi/github-actions-deploy-ecs@v0.1.2
+      id: ecs
+      with:
+        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws_default_region: us-east-1
+
+        #tf_stack_destroy: true
+        tf_state_bucket_destroy: true
+
+        aws_ecs_task_cpu: 256,512,512
+        aws_ecs_task_mem: 512,1024,1024
+        aws_ecs_app_image: nginx:latest,httpd:latest,public.ecr.aws/nginx/unit
+        aws_ecs_assign_public_ip: true
+
+        aws_ecs_container_port: 80,80,80
+        aws_ecs_lb_port: 8000,8001,8082
         aws_ecs_lb_redirect_enable: true
-        aws_ecs_lb_container_path: 'api'
+        aws_ecs_lb_container_path: 'apache,unit'
+
         aws_ecs_cloudwatch_enable: true
-        aws_ecs_cloudwatch_retention_days: 7
-        aws_ecs_additional_tags: '{\"key\":\"value\",\"key2\":\"value2\"}'
+        aws_ecs_cloudwatch_lg_name: nginx-leo
+        aws_ecs_cloudwatch_skip_destroy: false
+        aws_ecs_cloudwatch_retention_days: 1
 
         aws_r53_enable: true
-        aws_r53_domain_name: bitovi.com
-        aws_r53_sub_domain_name: ecs-test
+        aws_r53_domain_name: your-domain.com
+        aws_r53_sub_domain_name: sub-domain.com
+        aws_r53_enable_cert: true
 ```
+
+## Extra advanced usage
+If you know what you are doing, you can play around defining a JSON file for the Task definition. That allows you more granular control of it.
 
 # Inputs
 
