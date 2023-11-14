@@ -233,7 +233,7 @@ runs:
   steps:
     - name: Deploy with BitOps
       id: deploy
-      uses: bitovi/github-actions-commons@v0.0.9
+      uses: bitovi/github-actions-commons@ecs-cert-dep-fix
       with:
         # Current repo vars
         gh_action_repo: ${{ github.action_path }}
