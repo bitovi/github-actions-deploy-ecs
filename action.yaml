@@ -56,6 +56,7 @@ inputs:
   aws_ecs_enable:
     description: 'Toggle ECS Creation'
     required: false
+    default: true
   aws_ecs_service_name:
     description: 'Elastic Container Service name'
     required: false
