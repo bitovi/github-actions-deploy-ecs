@@ -41,7 +41,7 @@ jobs:
   deploy-ecs:
     runs-on: ubuntu-latest
     - name: Create Nginx example
-      uses: bitovi/github-actions-deploy-ecs@v0.1.3
+      uses: bitovi/github-actions-deploy-ecs@v0.1.4
       id: ecs
       with:
         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -80,7 +80,7 @@ jobs:
       url: ${{ steps.ecs.outputs.ecs_dns_record }}
     steps:
     - name: Create Nginx example
-      uses: bitovi/github-actions-deploy-ecs@v0.1.3
+      uses: bitovi/github-actions-deploy-ecs@v0.1.4
       id: ecs
       with:
         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -128,6 +128,9 @@ The following inputs can be used as `step.with` keys
 1. [Secrets and Environment Variables](#secrets-and-environment-variables-inputs)
 1. [VPC](#vpc-inputs)
 1. [DNS](#dns-inputs)
+
+### Outputs
+1. [Action Outputs](#action-outputs)
 
 #### **AWS Specific**
 | Name             | Type    | Description                        |
@@ -251,7 +254,7 @@ The following inputs can be used as `step.with` keys
 <br/>
 
 ## Contributing
-We would love for you to contribute to [`bitovi/github-actions-storybook-to-github-pages`](hhttps://github.com/bitovi/github-actions-storybook-to-github-pages).   [Issues](https://github.com/bitovi/github-actions-storybook-to-github-pages/issues) and [Pull Requests](https://github.com/bitovi/github-actions-storybook-to-github-pages/pulls) are welcome!
+We would love for you to contribute to [`bitovi/github-actions-deploy-ecs`](https://github.com/bitovi/github-actions-deploy-ecs).   [Issues](https://github.com/bitovi/github-actions-deploy-ecs/issues) and [Pull Requests](https://github.com/bitovi/github-actions-deploy-ecs/pulls) are welcome!
 
 
 ## Note about resource identifiers
