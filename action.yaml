@@ -190,6 +190,15 @@ inputs:
   aws_vpc_subnet_id:
     description: 'Specify a Subnet to be used with the instance. If none provided, will pick one.'
     required: false
+  aws_vpc_enable_nat_gateway:
+    description: 'Enables NAT gateway'
+    required: false
+  aws_vpc_single_nat_gateway:
+    description: 'Creates only one NAT gateway'
+    required: false
+  aws_vpc_external_nat_ip_ids:
+    description: 'Comma separated list of IP IDS to reuse in the NAT gateways'
+    required: false
   aws_vpc_additional_tags:
     description: 'A JSON object of additional tags that will be included on created resources. Example: `{"key1": "value1", "key2": "value2"}`'
     required: false
@@ -230,13 +239,19 @@ outputs:
   ecs_dns_record:
     description: "ECS DNS URL"
     value: ${{ steps.deploy.outputs.ecs_dns_record }}
-    
+  ecs_sg_id:
+    description: "ECS SG ID"
+    value: ${{ steps.deploy.outputs.ecs_sg_id }}
+  ecs_lb_sg_id:
+    description: "ECS LB SG ID"
+    value: ${{ steps.deploy.outputs.ecs_lb_sg_id }}
+
 runs:
   using: 'composite'
   steps:
     - name: Deploy with BitOps
       id: deploy
-      uses: bitovi/github-actions-commons@v0.0.11
+      uses: bitovi/github-actions-commons@v0.0.13
       with:
         # Current repo vars
         gh_action_repo: ${{ github.action_path }}
@@ -309,6 +324,9 @@ runs:
         aws_vpc_availability_zones: ${{inputs.aws_vpc_availability_zones }}
         aws_vpc_id: ${{inputs.aws_vpc_id }}
         aws_vpc_subnet_id: ${{inputs.aws_vpc_subnet_id }}
+        aws_vpc_enable_nat_gateway: ${{ inputs.aws_vpc_enable_nat_gateway }}
+        aws_vpc_single_nat_gateway: ${{ inputs.aws_vpc_single_nat_gateway }}
+        aws_vpc_external_nat_ip_ids: ${{ inputs.aws_vpc_external_nat_ip_ids }}
         aws_vpc_additional_tags: ${{inputs.aws_vpc_additional_tags }}
 
         # AWS Route53 Domains abd Certificates
