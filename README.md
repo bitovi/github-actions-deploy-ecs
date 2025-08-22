@@ -127,6 +127,7 @@ The following inputs can be used as `step.with` keys
 1. [ECS](#ecs-inputs)
 1. [Secrets and Environment Variables](#secrets-and-environment-variables-inputs)
 1. [VPC](#vpc-inputs)
+1. [WAF](#waf-inputs)
 1. [DNS](#dns-inputs)
 
 ### Outputs
@@ -206,6 +207,17 @@ The following inputs can be used as `step.with` keys
 <hr/>
 <br/>
 
+#### **WAF Inputs**
+| Name             | Type    | Description                        |
+|------------------|---------|------------------------------------|
+| `aws_waf_enable` | Boolean | Enable WAF for load balancer (LB only - NOT ELB). Default is `false` |
+| `aws_waf_rate_limit` | Number | Blocks IPs that exceed the specified request rate (requests per 5 minutes). Default is `2000` |
+| `aws_waf_managed_rules` | Boolean | Protection against OWASP Top 10 vulnerabilities and requests with known malicious patterns. Default is `true` |
+| `aws_waf_ip_reputation` | Boolean | Blocks requests from known malicious IP addresses. Default is `true` |
+| `aws_waf_logging_enable` | Boolean | Sends WAF logs to CloudWatch for monitoring. Default is `false` |
+| `aws_waf_log_retention_days` | Number | CloudWatch log retention period for WAF logs. Default is `30` |
+<hr/>
+<br/>
 
 #### **VPC Inputs**
 | Name             | Type    | Description                        |
