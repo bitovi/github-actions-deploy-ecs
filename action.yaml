@@ -167,22 +167,55 @@ inputs:
 
   # AWS WAF
   aws_waf_enable:
-    description: 'Enable WAF for load balancer'
-    required: false
-  aws_waf_rate_limit:
-    description: 'Rate limit for WAF (requests per 5 minutes)'
-    required: false
-  aws_waf_managed_rules:
-    description: 'Enable AWS managed rule sets'
-    required: false
-  aws_waf_ip_reputation:
-    description: 'Enable IP reputation rule set'
+    description: 'Enable WAF for load balancer.'
     required: false
   aws_waf_logging_enable:
-    description: 'Enable WAF logging to CloudWatch'
+    description: 'Enable WAF logging to CloudWatch.'
     required: false
   aws_waf_log_retention_days:
-    description: 'CloudWatch log retention period for WAF logs'
+    description: 'CloudWatch log retention period for WAF logs.'
+    required: false
+  aws_waf_rule_rate_limit:
+    description: 'Rate limit for WAF rules.'
+    required: false
+  aws_waf_rule_managed_rules:
+    description: 'Enable common managed rule groups to use.'
+    required: false
+  aws_waf_rule_managed_bad_inputs:
+    description: 'Enable managed rule for bad inputs.'
+    required: false
+  aws_waf_rule_ip_reputation:
+    description: 'Enable managed rule for IP reputation.'
+    required: false
+  aws_waf_rule_anonymous_ip:
+    description: 'Enable managed rule for anonymous IP.'
+    required: false
+  aws_waf_rule_bot_control:
+    description: 'Enable managed rule for bot control (costs extra).'
+    required: false
+  aws_waf_rule_geo_block_countries:
+    description: 'Comma separated list of countries to block.'
+    required: false
+  aws_waf_rule_geo_allow_only_countries:
+    description: 'Comma separated list of countries to allow.'
+    required: false
+  aws_waf_rule_sqli:
+    description: 'Enable managed rule for SQL injection.'
+    required: false
+  aws_waf_rule_linux:
+    description: 'Enable managed rule for Linux.'
+    required: false
+  aws_waf_rule_unix:
+    description: 'Enable managed rule for Unix.'
+    required: false
+  aws_waf_rule_admin_protection:
+    description: 'Enable managed rule for admin protection.'
+    required: false
+  aws_waf_rule_user_arn:
+    description: 'ARN of the user rule.'
+    required: false
+  aws_waf_additional_tags:
+    description: 'A list of strings that will be added to created resources.'
     required: false
 
   # AWS VPC Inputs
@@ -337,11 +370,22 @@ runs:
 
         # AWS WAF
         aws_waf_enable: ${{ inputs.aws_waf_enable }}
-        aws_waf_rate_limit: ${{ inputs.aws_waf_rate_limit }}
-        aws_waf_managed_rules: ${{ inputs.aws_waf_managed_rules }}
-        aws_waf_ip_reputation: ${{ inputs.aws_waf_ip_reputation }}
         aws_waf_logging_enable: ${{ inputs.aws_waf_logging_enable }}
         aws_waf_log_retention_days: ${{ inputs.aws_waf_log_retention_days }}
+        aws_waf_additional_tags: ${{ inputs.aws_waf_additional_tags }}
+        aws_waf_rule_rate_limit: ${{ inputs.aws_waf_rule_rate_limit }}
+        aws_waf_rule_managed_rules: ${{ inputs.aws_waf_rule_managed_rules }}
+        aws_waf_rule_managed_bad_inputs: ${{ inputs.aws_waf_rule_managed_bad_inputs }}
+        aws_waf_rule_ip_reputation: ${{ inputs.aws_waf_rule_ip_reputation }}
+        aws_waf_rule_anonymous_ip: ${{ inputs.aws_waf_rule_anonymous_ip }}
+        aws_waf_rule_bot_control: ${{ inputs.aws_waf_rule_bot_control }}
+        aws_waf_rule_geo_block_countries: ${{ inputs.aws_waf_rule_geo_block_countries }}
+        aws_waf_rule_geo_allow_only_countries: ${{ inputs.aws_waf_rule_geo_allow_only_countries }}
+        aws_waf_rule_user_arn: ${{ inputs.aws_waf_rule_user_arn }}
+        aws_waf_rule_sqli: ${{ inputs.aws_waf_rule_sqli }}
+        aws_waf_rule_linux: ${{ inputs.aws_waf_rule_linux }}
+        aws_waf_rule_unix: ${{ inputs.aws_waf_rule_unix }}
+        aws_waf_rule_admin_protection: ${{ inputs.aws_waf_rule_admin_protection }}
 
        # AWS VPC Inputs
         aws_vpc_create: ${{inputs.aws_vpc_create }}
