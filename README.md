@@ -41,7 +41,7 @@ jobs:
   deploy-ecs:
     runs-on: ubuntu-latest
     - name: Create Nginx example
-      uses: bitovi/github-actions-deploy-ecs@v0.1.4
+      uses: bitovi/github-actions-deploy-ecs@v0.1.6
       id: ecs
       with:
         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -80,7 +80,7 @@ jobs:
       url: ${{ steps.ecs.outputs.ecs_dns_record }}
     steps:
     - name: Create Nginx example
-      uses: bitovi/github-actions-deploy-ecs@v0.1.4
+      uses: bitovi/github-actions-deploy-ecs@v0.1.6
       id: ecs
       with:
         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -108,9 +108,27 @@ jobs:
         aws_ecs_cloudwatch_skip_destroy: false
         aws_ecs_cloudwatch_retention_days: 1
 
+        aws_waf_enable: true
+        aws_waf_logging_enable: true
+        aws_waf_log_retention_days: 3
+        aws_waf_additional_tags: '{\"some\":\"tag\"}'
+        aws_waf_rule_rate_limit: 200
+        aws_waf_rule_managed_rules: true
+        aws_waf_rule_managed_bad_inputs: true
+        aws_waf_rule_ip_reputation: true
+        aws_waf_rule_anonymous_ip: true
+        aws_waf_rule_bot_control: false #(Extra cost)
+        aws_waf_rule_geo_block_countries: "CN,RU"
+        #aws_waf_rule_geo_allow_only_countries: "US,CA"
+        #aws_waf_rule_user_arn:
+        aws_waf_rule_sqli: true
+        aws_waf_rule_linux: true
+        aws_waf_rule_unix: true
+        aws_waf_rule_admin_protection: true
+
         aws_r53_enable: true
         aws_r53_domain_name: your-domain.com
-        aws_r53_sub_domain_name: sub-domain.com
+        aws_r53_sub_domain_name: sub-domain
         aws_r53_enable_cert: true
 ```
 
