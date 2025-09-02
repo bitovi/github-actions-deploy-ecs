@@ -137,16 +137,25 @@ inputs:
     required: false
   aws_ecs_cloudwatch_enable:
     description: "Toggle cloudwatch for ECS. Default 'false'"
-    reuired: false
+    required: false
   aws_ecs_cloudwatch_lg_name:
     description: "Log group name. Will default to aws_identifier if none."
-    reuired: false
+    required: false
+  aws_ecs_cloudwatch_log_driver:
+    description: "Log driver to use for the ECS task."
+    required: false
+  aws_ecs_firelens_output_type:
+    description: "The type of output for FireLens."
+    required: false
+  aws_ecs_firelens_output_options:
+    description: "The options for the FireLens output."
+    required: false
   aws_ecs_cloudwatch_skip_destroy:
     description: "Toggle deletion or not when destroying the stack."
-    reuired: false
+    required: false
   aws_ecs_cloudwatch_retention_days:
     description: "Number of days to retain logs. 0 to never expire. Default '14'"
-    reuired: false
+    required: false
   aws_ecs_additional_tags:
     description: 'A list of strings that will be added to created resources'
     required: false
@@ -306,6 +315,9 @@ runs:
         aws_ecs_autoscaling_max_cpu: ${{ inputs.aws_ecs_autoscaling_max_cpu }}
         aws_ecs_cloudwatch_enable: ${{ inputs.aws_ecs_cloudwatch_enable }}
         aws_ecs_cloudwatch_lg_name: ${{ inputs.aws_ecs_cloudwatch_lg_name }}
+        aws_ecs_cloudwatch_log_driver: ${{ inputs.aws_ecs_cloudwatch_log_driver }}
+        aws_ecs_firelens_output_type: ${{ inputs.aws_ecs_firelens_output_type }}
+        aws_ecs_firelens_output_options: ${{ inputs.aws_ecs_firelens_output_options }}
         aws_ecs_cloudwatch_skip_destroy: ${{ inputs.aws_ecs_cloudwatch_skip_destroy }}
         aws_ecs_cloudwatch_retention_days: ${{ inputs.aws_ecs_cloudwatch_retention_days }}
         aws_ecs_additional_tags: ${{ inputs.aws_ecs_additional_tags }}
