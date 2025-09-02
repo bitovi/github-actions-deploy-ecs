@@ -41,7 +41,7 @@ jobs:
   deploy-ecs:
     runs-on: ubuntu-latest
     - name: Create Nginx example
-      uses: bitovi/github-actions-deploy-ecs@v0.1.4
+      uses: bitovi/github-actions-deploy-ecs@v0.1.6
       id: ecs
       with:
         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -80,7 +80,7 @@ jobs:
       url: ${{ steps.ecs.outputs.ecs_dns_record }}
     steps:
     - name: Create Nginx example
-      uses: bitovi/github-actions-deploy-ecs@v0.1.4
+      uses: bitovi/github-actions-deploy-ecs@v0.1.6
       id: ecs
       with:
         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -108,9 +108,27 @@ jobs:
         aws_ecs_cloudwatch_skip_destroy: false
         aws_ecs_cloudwatch_retention_days: 1
 
+        aws_waf_enable: true
+        aws_waf_logging_enable: true
+        aws_waf_log_retention_days: 3
+        aws_waf_additional_tags: '{\"some\":\"tag\"}'
+        aws_waf_rule_rate_limit: 200
+        aws_waf_rule_managed_rules: true
+        aws_waf_rule_managed_bad_inputs: true
+        aws_waf_rule_ip_reputation: true
+        aws_waf_rule_anonymous_ip: true
+        aws_waf_rule_bot_control: false #(Extra cost)
+        aws_waf_rule_geo_block_countries: "CN,RU"
+        #aws_waf_rule_geo_allow_only_countries: "US,CA"
+        #aws_waf_rule_user_arn:
+        aws_waf_rule_sqli: true
+        aws_waf_rule_linux: true
+        aws_waf_rule_unix: true
+        aws_waf_rule_admin_protection: true
+
         aws_r53_enable: true
         aws_r53_domain_name: your-domain.com
-        aws_r53_sub_domain_name: sub-domain.com
+        aws_r53_sub_domain_name: sub-domain
         aws_r53_enable_cert: true
 ```
 
@@ -127,6 +145,7 @@ The following inputs can be used as `step.with` keys
 1. [ECS](#ecs-inputs)
 1. [Secrets and Environment Variables](#secrets-and-environment-variables-inputs)
 1. [VPC](#vpc-inputs)
+1. [WAF](#waf-inputs)
 1. [DNS](#dns-inputs)
 
 ### Outputs
@@ -206,6 +225,28 @@ The following inputs can be used as `step.with` keys
 <hr/>
 <br/>
 
+#### **WAF Inputs**
+| Name             | Type    | Description                        |
+|------------------|---------|------------------------------------|
+| `aws_waf_enable` | Boolean | Enable WAF for load balancer (LB only - NOT ELB). Default is `false` |
+| `aws_waf_logging_enable`| Boolean | Enable WAF logging to CloudWatch. Default `false` |
+| `aws_waf_log_retention_days`| Number | CloudWatch log retention period for WAF logs. Default `30` |
+| `aws_waf_rule_rate_limit`| String | Rate limit for WAF rules. Default is `2000` |
+| `aws_waf_rule_managed_rules`| Boolean | Enable common managed rule groups to use. Default `false` |
+| `aws_waf_rule_managed_bad_inputs`| Boolean | Enable managed rule for bad inputs. Default `false` |
+| `aws_waf_rule_ip_reputation`| Boolean | Enable managed rule for IP reputation. Default `false` |
+| `aws_waf_rule_anonymous_ip`| Boolean | Enable managed rule for anonymous IP. Default `false` |
+| `aws_waf_rule_bot_control`| Boolean | Enable managed rule for bot control (costs extra). Default `false` |
+| `aws_waf_rule_geo_block_countries`| String | Comma separated list of countries to block. |
+| `aws_waf_rule_geo_allow_only_countries`| String | Comma separated list of countries to allow. |
+| `aws_waf_rule_sqli`| Boolean | Enable managed rule for SQL injection. Default `false` |
+| `aws_waf_rule_linux`| Boolean | Enable managed rule for Linux. Default `false` |
+| `aws_waf_rule_unix`| Boolean | Enable managed rule for Unix. Default `false` |
+| `aws_waf_rule_admin_protection`| Boolean | Enable managed rule for admin protection. Default `false` |
+| `aws_waf_rule_user_arn`| String | String of the user created ARN set of rules. |
+| `aws_waf_additional_tags`| String | A list of strings that will be added to created resources. Default `"{}"` |
+<hr/>
+<br/>
 
 #### **VPC Inputs**
 | Name             | Type    | Description                        |
