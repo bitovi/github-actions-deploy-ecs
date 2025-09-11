@@ -307,7 +307,7 @@ runs:
   steps:
     - name: Deploy with BitOps
       id: deploy
-      uses: bitovi/github-actions-commons@add-aws_ecs_task_ignore_definition
+      uses: bitovi/github-actions-commons@v1
       with:
         # Current repo vars
         gh_action_repo: ${{ github.action_path }}
