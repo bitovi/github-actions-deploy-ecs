@@ -344,6 +344,7 @@ runs:
         aws_ecs_service_launch_type: ${{ inputs.aws_ecs_service_launch_type }}
         aws_ecs_task_type: ${{ inputs.aws_ecs_task_type }}
         aws_ecs_task_name: ${{ inputs.aws_ecs_task_name }}
+        aws_ecs_task_ignore_definition: ${{ inputs.aws_ecs_task_ignore_definition }}
         aws_ecs_task_execution_role: ${{ inputs.aws_ecs_task_execution_role }}
         aws_ecs_task_json_definition_file: ${{ inputs.aws_ecs_task_json_definition_file }}
         aws_ecs_task_network_mode: ${{ inputs.aws_ecs_task_network_mode }}
