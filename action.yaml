@@ -72,6 +72,9 @@ inputs:
   aws_ecs_task_name:
     description: 'Elastic Container Service task name'
     required: false
+  aws_ecs_task_ignore_definition:
+    description: 'Toggle to ignore task definition changes after first deployment. Useful when using external tools to manage the task definition.'
+    required: false
   aws_ecs_task_execution_role:
     description: 'Elastic Container Service task execution role name from IAM. Defaults to "ecsTaskExecutionRole"'
     required: false
