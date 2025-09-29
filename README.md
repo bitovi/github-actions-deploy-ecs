@@ -133,7 +133,11 @@ jobs:
 ```
 
 ## Extra advanced usage
-If you know what you are doing, you can play around defining a JSON file for the Task definition. That allows you more granular control of it.
+If you know what you are doing, you can play around defining a JSON file for the container definitions. That allows you more granular control of it.
+
+### Example Task Definition
+
+You can find an example ECS task definition in [`task-definition.example.json`](./task-definition.example.json).
 
 # Inputs
 
@@ -187,7 +191,7 @@ The following inputs can be used as `step.with` keys
 | `aws_ecs_task_name`| String | Elastic Container Service task name. If task is defined with a JSON file, should be the same as the container name. |
 | `aws_ecs_task_ignore_definition` | Boolean | Ignores changes done in the ECS Tasks and services. That way stack can be managed from outside Terraform. Defaults to `false` |  
 | `aws_ecs_task_execution_role`| String | Elastic Container Service task execution role name from IAM. Defaults to `ecsTaskExecutionRole`. |
-| `aws_ecs_task_json_definition_file`| String | Name of the json file containing task definition. Overrides every other input. |
+| `aws_ecs_task_json_definition_file`| String | Name of the json file containing container definitions. Overrides every other input. |
 | `aws_ecs_task_network_mode`| String | Network type to use in task definition. One of `none`, `bridge`, `awsvpc`, and `host`. |
 | `aws_ecs_task_cpu`| String | Task CPU Amount. |
 | `aws_ecs_task_mem`| String | Task Mem Amount. |
