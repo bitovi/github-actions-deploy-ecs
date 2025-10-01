@@ -4,6 +4,9 @@
 
 This action uses the new GitHub Actions Commons, that is used by many Bitovi GitHub Actions, and so it's constantly evolving and improving.
 
+ ⚠️ BREAKING CHANGES INTRODUCED IN V1
+ Migrating from v0.1.* to v1.0.0 is possible. See [migration path](#migration-path) below.
+
 ![alt](https://bitovi-gha-pixel-tracker-deployment-main.bitovi-sandbox.com/pixel/VWxHSTB15-F2P3xFRAdVX)
 ## Action Summary
 With this action, you can create your ECS (Fargate or EC2) cluster, with tasks and service definitions in a matter of minutes! With an ALB, DNS and even Certificate (if in Route53)
@@ -41,7 +44,7 @@ jobs:
   deploy-ecs:
     runs-on: ubuntu-latest
     - name: Create Nginx example
-      uses: bitovi/github-actions-deploy-ecs@v0.1.6
+      uses: bitovi/github-actions-deploy-ecs@v1
       id: ecs
       with:
         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -80,7 +83,7 @@ jobs:
       url: ${{ steps.ecs.outputs.ecs_dns_record }}
     steps:
     - name: Create Nginx example
-      uses: bitovi/github-actions-deploy-ecs@v0.1.6
+      uses: bitovi/github-actions-deploy-ecs@v1
       id: ecs
       with:
         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -133,7 +136,11 @@ jobs:
 ```
 
 ## Extra advanced usage
-If you know what you are doing, you can play around defining a JSON file for the Task definition. That allows you more granular control of it.
+If you know what you are doing, you can play around defining a JSON file for the container definitions. That allows you more granular control of it.
+
+### Example Task Definition
+
+You can find an example ECS task definition in [`task-definition.example.json`](./task-definition.example.json).
 
 # Inputs
 
@@ -187,7 +194,7 @@ The following inputs can be used as `step.with` keys
 | `aws_ecs_task_name`| String | Elastic Container Service task name. If task is defined with a JSON file, should be the same as the container name. |
 | `aws_ecs_task_ignore_definition` | Boolean | Ignores changes done in the ECS Tasks and services. That way stack can be managed from outside Terraform. Defaults to `false` |  
 | `aws_ecs_task_execution_role`| String | Elastic Container Service task execution role name from IAM. Defaults to `ecsTaskExecutionRole`. |
-| `aws_ecs_task_json_definition_file`| String | Name of the json file containing task definition. Overrides every other input. |
+| `aws_ecs_task_json_definition_file`| String | Name of the json file containing container definitions. Overrides every other input. |
 | `aws_ecs_task_network_mode`| String | Network type to use in task definition. One of `none`, `bridge`, `awsvpc`, and `host`. |
 | `aws_ecs_task_cpu`| String | Task CPU Amount. |
 | `aws_ecs_task_mem`| String | Task Mem Amount. |
@@ -298,6 +305,13 @@ The following inputs can be used as `step.with` keys
 ## Contributing
 We would love for you to contribute to [`bitovi/github-actions-deploy-ecs`](https://github.com/bitovi/github-actions-deploy-ecs).   [Issues](https://github.com/bitovi/github-actions-deploy-ecs/issues) and [Pull Requests](https://github.com/bitovi/github-actions-deploy-ecs/pulls) are welcome!
 
+## **Migration path**
+
+In order to migrate from v0 to v1, the following path should be taken. **Expect downtime**
+1. Set `aws_r53_enable` to `false`, run the action. 
+2. Bump to `v1` of the action with `aws_ecs_container_port` and `aws_ecs_lb_port` removed. Run the action.
+3. Add ports back. Run the action.
+4. Set `aws_r53_enable` to `true`, run the action. 
 
 ## Note about resource identifiers
 
