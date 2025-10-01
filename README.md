@@ -4,6 +4,9 @@
 
 This action uses the new GitHub Actions Commons, that is used by many Bitovi GitHub Actions, and so it's constantly evolving and improving.
 
+ ⚠️ BREAKING CHANGES INTRODUCED IN V1
+ Migrating from v0.1.* to v1.0.0 is possible. See [migration path](#migration-path) below.
+
 ![alt](https://bitovi-gha-pixel-tracker-deployment-main.bitovi-sandbox.com/pixel/VWxHSTB15-F2P3xFRAdVX)
 ## Action Summary
 With this action, you can create your ECS (Fargate or EC2) cluster, with tasks and service definitions in a matter of minutes! With an ALB, DNS and even Certificate (if in Route53)
@@ -41,7 +44,7 @@ jobs:
   deploy-ecs:
     runs-on: ubuntu-latest
     - name: Create Nginx example
-      uses: bitovi/github-actions-deploy-ecs@v0.1.6
+      uses: bitovi/github-actions-deploy-ecs@v1
       id: ecs
       with:
         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -80,7 +83,7 @@ jobs:
       url: ${{ steps.ecs.outputs.ecs_dns_record }}
     steps:
     - name: Create Nginx example
-      uses: bitovi/github-actions-deploy-ecs@v0.1.6
+      uses: bitovi/github-actions-deploy-ecs@v1
       id: ecs
       with:
         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -302,6 +305,13 @@ The following inputs can be used as `step.with` keys
 ## Contributing
 We would love for you to contribute to [`bitovi/github-actions-deploy-ecs`](https://github.com/bitovi/github-actions-deploy-ecs).   [Issues](https://github.com/bitovi/github-actions-deploy-ecs/issues) and [Pull Requests](https://github.com/bitovi/github-actions-deploy-ecs/pulls) are welcome!
 
+## **Migration path**
+
+In order to migrate from v0 to v1, the following path should be taken. **Expect downtime**
+1. Set `aws_r53_enable` to `false`, run the action. 
+2. Bump to `v1` of the action with `aws_ecs_container_port` and `aws_ecs_lb_port` removed. Run the action.
+3. Add ports back. Run the action.
+4. Set `aws_r53_enable` to `true`, run the action. 
 
 ## Note about resource identifiers
 
