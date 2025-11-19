@@ -123,6 +123,9 @@ inputs:
   aws_ecs_lb_ssl_policy:
     description: 'SSL Policy for HTTPS listener in ALB. Will default to ELBSecurityPolicy-TLS13-1-2-2021-06 if none provided.'
     required: false
+  aws_ecs_lb_www_to_apex_redirect:
+    description: 'Toggle redirect from www to apex domain. aws_r53_domain_name must be set.'
+    required: false
   aws_ecs_autoscaling_enable:
     description: 'Toggle ecs autoscaling policy'
     required: false
@@ -307,7 +310,7 @@ runs:
   steps:
     - name: Deploy with BitOps
       id: deploy
-      uses: bitovi/github-actions-commons@v2
+      uses: bitovi/github-actions-commons@Add-ECS-www-to-apex-option
       with:
         # Current repo vars
         gh_action_repo: ${{ github.action_path }}
@@ -355,6 +358,7 @@ runs:
         aws_ecs_lb_redirect_enable: ${{ inputs.aws_ecs_lb_redirect_enable }}
         aws_ecs_lb_container_path: ${{ inputs.aws_ecs_lb_container_path }}
         aws_ecs_lb_ssl_policy: ${{ inputs.aws_ecs_lb_ssl_policy }}
+        aws_ecs_lb_www_to_apex_redirect: ${{ inputs.aws_ecs_lb_www_to_apex_redirect }}
         aws_ecs_autoscaling_enable: ${{ inputs.aws_ecs_autoscaling_enable }}
         aws_ecs_autoscaling_max_nodes: ${{ inputs.aws_ecs_autoscaling_max_nodes }}
         aws_ecs_autoscaling_min_nodes: ${{ inputs.aws_ecs_autoscaling_min_nodes }}
