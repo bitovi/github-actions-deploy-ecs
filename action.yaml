@@ -310,7 +310,7 @@ runs:
   steps:
     - name: Deploy with BitOps
       id: deploy
-      uses: bitovi/github-actions-commons@Add-ECS-www-to-apex-option
+      uses: bitovi/github-actions-commons@main
       with:
         # Current repo vars
         gh_action_repo: ${{ github.action_path }}
