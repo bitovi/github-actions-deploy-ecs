@@ -99,7 +99,7 @@ jobs:
       url: ${{ steps.ecs.outputs.ecs_dns_record }}
     steps:
     - name: Create Nginx example
-      uses: bitovi/github-actions-deploy-ecs@v1
+      uses: bitovi/github-actions-deploy-ecs@fix-non-ec2-issue
       id: ecs
       with:
         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
