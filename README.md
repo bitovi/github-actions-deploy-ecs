@@ -7,6 +7,22 @@ This action uses the new GitHub Actions Commons, that is used by many Bitovi Git
  ⚠️ BREAKING CHANGES INTRODUCED IN V1
  Migrating from v0.1.* to v1.0.0 is possible. See [migration path](#migration-path) below.
 
+## ‼️ Resource identifiers ‼️ 
+
+#### `aws_resource_identifier` is used as a unique key identifier for naming AWS resources.
+
+### By default, it's made from the following values:
+
+```
+${GITHUB_ORG_NAME}-${GITHUB_REPO_NAME}-${GITHUB_BRANCH_NAME}
+```
+
+### ‼️ Changing any of these values may result in **unexpected or conflicting resource creation**. ‼️</br>
+
+> ✨ **Multiple deployments:**  
+If you need to deploy multiple environments (e.g. `dev`, `staging`, `prod`) within the same repository, explicitly set `aws_resource_identifier` and append the environment name to ensure uniqueness.
+
+
 ![alt](https://bitovi-gha-pixel-tracker-deployment-main.bitovi-sandbox.com/pixel/VWxHSTB15-F2P3xFRAdVX)
 ## Action Summary
 With this action, you can create your ECS (Fargate or EC2) cluster, with tasks and service definitions in a matter of minutes! With an ALB, DNS and even Certificate (if in Route53)
@@ -241,19 +257,32 @@ The following inputs can be used as `step.with` keys
 | `aws_waf_enable` | Boolean | Enable WAF for load balancer (LB only - NOT ELB). Default is `false` |
 | `aws_waf_logging_enable`| Boolean | Enable WAF logging to CloudWatch. Default `false` |
 | `aws_waf_log_retention_days`| Number | CloudWatch log retention period for WAF logs. Default `30` |
-| `aws_waf_rule_rate_limit`| String | Rate limit for WAF rules. Default is `2000` |
-| `aws_waf_rule_managed_rules`| Boolean | Enable common managed rule groups to use. Default `false` |
-| `aws_waf_rule_managed_bad_inputs`| Boolean | Enable managed rule for bad inputs. Default `false` |
-| `aws_waf_rule_ip_reputation`| Boolean | Enable managed rule for IP reputation. Default `false` |
-| `aws_waf_rule_anonymous_ip`| Boolean | Enable managed rule for anonymous IP. Default `false` |
-| `aws_waf_rule_bot_control`| Boolean | Enable managed rule for bot control (costs extra). Default `false` |
-| `aws_waf_rule_geo_block_countries`| String | Comma separated list of countries to block. |
-| `aws_waf_rule_geo_allow_only_countries`| String | Comma separated list of countries to allow. |
-| `aws_waf_rule_sqli`| Boolean | Enable managed rule for SQL injection. Default `false` |
-| `aws_waf_rule_linux`| Boolean | Enable managed rule for Linux. Default `false` |
-| `aws_waf_rule_unix`| Boolean | Enable managed rule for Unix. Default `false` |
-| `aws_waf_rule_admin_protection`| Boolean | Enable managed rule for admin protection. Default `false` |
-| `aws_waf_rule_user_arn`| String | String of the user created ARN set of rules. |
+| `aws_waf_rule_rate_limit`| String | Rate limit for WAF rules. Default is `2000`. |
+| `aws_waf_rule_rate_limit_priority` | Number | Priority for rate limit rule. Defaults to `10`. |
+| `aws_waf_rule_managed_rules` | Boolean | Enable common managed rule groups to use. Defaults to `false`. |
+| `aws_waf_rule_managed_rules_priority` | Number | Priority for managed rules. Defaults to `20`. |
+| `aws_waf_rule_managed_bad_inputs` | Boolean | Enable managed rule for bad inputs. Defaults to `false`. |
+| `aws_waf_rule_managed_bad_inputs_priority` | Number | Priority for bad inputs rule. Defaults to `30`. |
+| `aws_waf_rule_ip_reputation` | Boolean | Enable managed rule for IP reputation. Defaults to `false`. |
+| `aws_waf_rule_ip_reputation_priority`  | Number | Priority for IP reputation rule. Defaults to `40`. |
+| `aws_waf_rule_anonymous_ip`  | Boolean | Enable managed rule for anonymous IP. Defaults to `false`. |
+| `aws_waf_rule_anonymous_ip_priority` | Number | Priority for anonymous IP rule. Defaults to `50`. |
+| `aws_waf_rule_bot_control` | Boolean | Enable managed rule for bot control (costs extra). Defaults to `false`. |
+| `aws_waf_rule_bot_control_priority`  | Number | Priority for bot control rule. Defaults to `60`. |
+| `aws_waf_rule_geo_block_countries` | String | Comma separated list of countries to block. Defaults to ``. |
+| `aws_waf_rule_geo_block_countries_priority`  | Number | Priority for geo block countries rule. Defaults to `70`. |
+| `aws_waf_rule_geo_allow_only_countries`  | String | Comma separated list of countries to allow. Defaults to ``. |
+| `aws_waf_rule_geo_allow_only_countries_priority` | Number | Priority for geo allow only countries rule. Defaults to `75`. |
+| `aws_waf_rule_sqli`  | Boolean | Enable managed rule for SQL injection. Defaults to `false`. |
+| `aws_waf_rule_sqli_priority` | Number | Priority for SQL injection rule. Defaults to `85`. |
+| `aws_waf_rule_linux` | Boolean | Enable managed rule for Linux. Defaults to `false`. |
+| `aws_waf_rule_linux_priority`  | Number | Priority for Linux rule. Defaults to `90`. |
+| `aws_waf_rule_unix`  | Boolean | Enable managed rule for Unix. Defaults to `false`. |
+| `aws_waf_rule_unix_priority` | Number | Priority for Unix rule. Defaults to `95`. |
+| `aws_waf_rule_admin_protection`  | Boolean | Enable managed rule for admin protection. Defaults to `false`. |
+| `aws_waf_rule_admin_protection_priority` | Number | Priority for admin protection rule. Defaults to `100`. |
+| `aws_waf_rule_user_arn` | String | ARN of the user rule. Defaults to ``. |
+| `aws_waf_rule_user_arn_priority` | Number | Priority for user ARN rule. Defaults to `80`. |
 | `aws_waf_additional_tags`| String | A list of strings that will be added to created resources. Default `"{}"` |
 <hr/>
 <br/>

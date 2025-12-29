@@ -310,7 +310,7 @@ runs:
   steps:
     - name: Deploy with BitOps
       id: deploy
-      uses: bitovi/github-actions-commons@v2
+      uses: bitovi/github-actions-commons@v2.0.7
       with:
         # Current repo vars
         gh_action_repo: ${{ github.action_path }}
@@ -382,18 +382,31 @@ runs:
         aws_waf_log_retention_days: ${{ inputs.aws_waf_log_retention_days }}
         aws_waf_additional_tags: ${{ inputs.aws_waf_additional_tags }}
         aws_waf_rule_rate_limit: ${{ inputs.aws_waf_rule_rate_limit }}
+        aws_waf_rule_rate_limit_priority: ${{ inputs.aws_waf_rule_rate_limit_priority }}
         aws_waf_rule_managed_rules: ${{ inputs.aws_waf_rule_managed_rules }}
+        aws_waf_rule_managed_rules_priority: ${{ inputs.aws_waf_rule_managed_rules_priority }}
         aws_waf_rule_managed_bad_inputs: ${{ inputs.aws_waf_rule_managed_bad_inputs }}
+        aws_waf_rule_managed_bad_inputs_priority: ${{ inputs.aws_waf_rule_managed_bad_inputs_priority }}
         aws_waf_rule_ip_reputation: ${{ inputs.aws_waf_rule_ip_reputation }}
+        aws_waf_rule_ip_reputation_priority: ${{ inputs.aws_waf_rule_ip_reputation_priority }}
         aws_waf_rule_anonymous_ip: ${{ inputs.aws_waf_rule_anonymous_ip }}
+        aws_waf_rule_anonymous_ip_priority: ${{ inputs.aws_waf_rule_anonymous_ip_priority }}
         aws_waf_rule_bot_control: ${{ inputs.aws_waf_rule_bot_control }}
+        aws_waf_rule_bot_control_priority: ${{ inputs.aws_waf_rule_bot_control_priority }}
         aws_waf_rule_geo_block_countries: ${{ inputs.aws_waf_rule_geo_block_countries }}
+        aws_waf_rule_geo_block_countries_priority: ${{ inputs.aws_waf_rule_geo_block_countries_priority }}
         aws_waf_rule_geo_allow_only_countries: ${{ inputs.aws_waf_rule_geo_allow_only_countries }}
+        aws_waf_rule_geo_allow_only_countries_priority: ${{ inputs.aws_waf_rule_geo_allow_only_countries_priority }}
         aws_waf_rule_user_arn: ${{ inputs.aws_waf_rule_user_arn }}
+        aws_waf_rule_user_arn_priority: ${{ inputs.aws_waf_rule_user_arn_priority }}
         aws_waf_rule_sqli: ${{ inputs.aws_waf_rule_sqli }}
+        aws_waf_rule_sqli_priority: ${{ inputs.aws_waf_rule_sqli_priority }}
         aws_waf_rule_linux: ${{ inputs.aws_waf_rule_linux }}
+        aws_waf_rule_linux_priority: ${{ inputs.aws_waf_rule_linux_priority }}
         aws_waf_rule_unix: ${{ inputs.aws_waf_rule_unix }}
+        aws_waf_rule_unix_priority: ${{ inputs.aws_waf_rule_unix_priority }}
         aws_waf_rule_admin_protection: ${{ inputs.aws_waf_rule_admin_protection }}
+        aws_waf_rule_admin_protection_priority: ${{ inputs.aws_waf_rule_admin_protection_priority }}
 
        # AWS VPC Inputs
         aws_vpc_create: ${{inputs.aws_vpc_create }}
