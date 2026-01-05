@@ -7,6 +7,22 @@ This action uses the new GitHub Actions Commons, that is used by many Bitovi Git
  ⚠️ BREAKING CHANGES INTRODUCED IN V1
  Migrating from v0.1.* to v1.0.0 is possible. See [migration path](#migration-path) below.
 
+## ‼️ Resource identifiers ‼️ 
+
+#### `aws_resource_identifier` is used as a unique key identifier for naming AWS resources.
+
+### By default, it's made from the following values:
+
+```
+${GITHUB_ORG_NAME}-${GITHUB_REPO_NAME}-${GITHUB_BRANCH_NAME}
+```
+
+### ‼️ Changing any of these values may result in **unexpected or conflicting resource creation**. ‼️</br>
+
+> ✨ **Multiple deployments:**  
+If you need to deploy multiple environments (e.g. `dev`, `staging`, `prod`) within the same repository, explicitly set `aws_resource_identifier` and append the environment name to ensure uniqueness.
+
+
 ![alt](https://bitovi-gha-pixel-tracker-deployment-main.bitovi-sandbox.com/pixel/VWxHSTB15-F2P3xFRAdVX)
 ## Action Summary
 With this action, you can create your ECS (Fargate or EC2) cluster, with tasks and service definitions in a matter of minutes! With an ALB, DNS and even Certificate (if in Route53)
@@ -83,7 +99,7 @@ jobs:
       url: ${{ steps.ecs.outputs.ecs_dns_record }}
     steps:
     - name: Create Nginx example
-      uses: bitovi/github-actions-deploy-ecs@v1
+      uses: bitovi/github-actions-deploy-ecs@@v1.0.2
       id: ecs
       with:
         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -136,12 +152,67 @@ jobs:
         aws_r53_enable_cert: true
 ```
 
-## Extra advanced usage
-If you know what you are doing, you can play around defining a JSON file for the container definitions. That allows you more granular control of it.
+## Advanced Use #2 - Container definitions in a file
 
-### Example Task Definition
+The example below will create a cluster using the container definitions from a JSON file. This file could be modified within the same workflow file.
 
-You can find an example ECS task definition in [`task-definition.example.json`](./task-definition.example.json).
+```yaml
+      - name: Deploy ECS Web container
+        id: ecs-management
+        uses: bitovi/github-actions-deploy-ecs@v1
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_default_region: ${{ env.AWS_DEFAULT_REGION }}
+          aws_resource_identifier: "service-${{ inputs.environment }}"
+          
+          aws_ecs_task_name: "service-${{ inputs.environment }}"
+          aws_ecs_task_json_definition_file: infra/service-task.json
+          aws_ecs_task_execution_role: "ecs-task-execution-role-${{ inputs.environment }}"
+          aws_ecs_task_cpu: ${{ env.TASK_CPU }}
+          aws_ecs_task_mem: ${{ env.TASK_MEM }}
+          tf_stack_destroy: ${{ inputs.tf_stack_destroy }}
+          tf_state_bucket_destroy: ${{ inputs.tf_stack_destroy }} 
+
+          # web specific
+          aws_ecs_assign_public_ip: true
+          aws_ecs_node_count: 1
+          aws_ecs_container_port: ${{ env.CONTAINER_PORT }}
+          aws_ecs_lb_port: ${{ env.LB_PORT }}
+          aws_ecs_lb_redirect_enable: true
+          aws_ecs_lb_www_to_apex_redirect: true
+
+          # CloudWatch logging
+          aws_ecs_cloudwatch_enable: true
+          aws_ecs_cloudwatch_lg_name: "/ecs/service/${{ inputs.environment }}"
+          aws_ecs_cloudwatch_retention_days: 5
+
+          # WAF settings
+          aws_waf_enable: true
+          aws_waf_logging_enable: true
+          aws_waf_log_retention_days: 3
+          aws_waf_rule_rate_limit: 400
+          aws_waf_rule_managed_rules: false
+          aws_waf_rule_managed_bad_inputs: true
+          aws_waf_rule_ip_reputation: true
+          aws_waf_rule_anonymous_ip: true
+          aws_waf_rule_bot_control: false #(Extra cost)
+          #aws_waf_rule_geo_block_countries: "US,CA"
+          aws_waf_rule_geo_allow_only_countries: "US,CA"
+          aws_waf_rule_user_arn: ${{ vars.AWS_WAF_ARN || '' }}
+          aws_waf_rule_sqli: true
+          aws_waf_rule_linux: true
+          aws_waf_rule_unix: true
+
+          aws_r53_enable: true
+          aws_r53_domain_name: ${{ vars.DOMAIN_NAME }}
+          aws_r53_enable_cert: true
+          aws_r53_root_domain_deploy: true
+```
+
+### Example Container Definition
+
+You can find an example ECS Container definition in [`container-definition.example.json`](./container-definition.example.json).
 
 # Inputs
 
@@ -241,19 +312,32 @@ The following inputs can be used as `step.with` keys
 | `aws_waf_enable` | Boolean | Enable WAF for load balancer (LB only - NOT ELB). Default is `false` |
 | `aws_waf_logging_enable`| Boolean | Enable WAF logging to CloudWatch. Default `false` |
 | `aws_waf_log_retention_days`| Number | CloudWatch log retention period for WAF logs. Default `30` |
-| `aws_waf_rule_rate_limit`| String | Rate limit for WAF rules. Default is `2000` |
-| `aws_waf_rule_managed_rules`| Boolean | Enable common managed rule groups to use. Default `false` |
-| `aws_waf_rule_managed_bad_inputs`| Boolean | Enable managed rule for bad inputs. Default `false` |
-| `aws_waf_rule_ip_reputation`| Boolean | Enable managed rule for IP reputation. Default `false` |
-| `aws_waf_rule_anonymous_ip`| Boolean | Enable managed rule for anonymous IP. Default `false` |
-| `aws_waf_rule_bot_control`| Boolean | Enable managed rule for bot control (costs extra). Default `false` |
-| `aws_waf_rule_geo_block_countries`| String | Comma separated list of countries to block. |
-| `aws_waf_rule_geo_allow_only_countries`| String | Comma separated list of countries to allow. |
-| `aws_waf_rule_sqli`| Boolean | Enable managed rule for SQL injection. Default `false` |
-| `aws_waf_rule_linux`| Boolean | Enable managed rule for Linux. Default `false` |
-| `aws_waf_rule_unix`| Boolean | Enable managed rule for Unix. Default `false` |
-| `aws_waf_rule_admin_protection`| Boolean | Enable managed rule for admin protection. Default `false` |
-| `aws_waf_rule_user_arn`| String | String of the user created ARN set of rules. |
+| `aws_waf_rule_rate_limit`| String | Rate limit for WAF rules. Default is `2000`. |
+| `aws_waf_rule_rate_limit_priority` | Number | Priority for rate limit rule. Defaults to `10`. |
+| `aws_waf_rule_managed_rules` | Boolean | Enable common managed rule groups to use. Defaults to `false`. |
+| `aws_waf_rule_managed_rules_priority` | Number | Priority for managed rules. Defaults to `20`. |
+| `aws_waf_rule_managed_bad_inputs` | Boolean | Enable managed rule for bad inputs. Defaults to `false`. |
+| `aws_waf_rule_managed_bad_inputs_priority` | Number | Priority for bad inputs rule. Defaults to `30`. |
+| `aws_waf_rule_ip_reputation` | Boolean | Enable managed rule for IP reputation. Defaults to `false`. |
+| `aws_waf_rule_ip_reputation_priority`  | Number | Priority for IP reputation rule. Defaults to `40`. |
+| `aws_waf_rule_anonymous_ip`  | Boolean | Enable managed rule for anonymous IP. Defaults to `false`. |
+| `aws_waf_rule_anonymous_ip_priority` | Number | Priority for anonymous IP rule. Defaults to `50`. |
+| `aws_waf_rule_bot_control` | Boolean | Enable managed rule for bot control (costs extra). Defaults to `false`. |
+| `aws_waf_rule_bot_control_priority`  | Number | Priority for bot control rule. Defaults to `60`. |
+| `aws_waf_rule_geo_block_countries` | String | Comma separated list of countries to block. Defaults to ``. |
+| `aws_waf_rule_geo_block_countries_priority`  | Number | Priority for geo block countries rule. Defaults to `70`. |
+| `aws_waf_rule_geo_allow_only_countries`  | String | Comma separated list of countries to allow. Defaults to ``. |
+| `aws_waf_rule_geo_allow_only_countries_priority` | Number | Priority for geo allow only countries rule. Defaults to `75`. |
+| `aws_waf_rule_sqli`  | Boolean | Enable managed rule for SQL injection. Defaults to `false`. |
+| `aws_waf_rule_sqli_priority` | Number | Priority for SQL injection rule. Defaults to `85`. |
+| `aws_waf_rule_linux` | Boolean | Enable managed rule for Linux. Defaults to `false`. |
+| `aws_waf_rule_linux_priority`  | Number | Priority for Linux rule. Defaults to `90`. |
+| `aws_waf_rule_unix`  | Boolean | Enable managed rule for Unix. Defaults to `false`. |
+| `aws_waf_rule_unix_priority` | Number | Priority for Unix rule. Defaults to `95`. |
+| `aws_waf_rule_admin_protection`  | Boolean | Enable managed rule for admin protection. Defaults to `false`. |
+| `aws_waf_rule_admin_protection_priority` | Number | Priority for admin protection rule. Defaults to `100`. |
+| `aws_waf_rule_user_arn` | String | ARN of the user rule. Defaults to ``. |
+| `aws_waf_rule_user_arn_priority` | Number | Priority for user ARN rule. Defaults to `80`. |
 | `aws_waf_additional_tags`| String | A list of strings that will be added to created resources. Default `"{}"` |
 <hr/>
 <br/>
