@@ -99,7 +99,7 @@ jobs:
       url: ${{ steps.ecs.outputs.ecs_dns_record }}
     steps:
     - name: Create Nginx example
-      uses: bitovi/github-actions-deploy-ecs@fix-non-ec2-issue
+      uses: bitovi/github-actions-deploy-ecs@@v1.0.2
       id: ecs
       with:
         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -152,12 +152,67 @@ jobs:
         aws_r53_enable_cert: true
 ```
 
-## Extra advanced usage
-If you know what you are doing, you can play around defining a JSON file for the container definitions. That allows you more granular control of it.
+## Advanced Use #2 - Container definitions in a file
 
-### Example Task Definition
+The example below will create a cluster using the container definitions from a JSON file. This file could be modified within the same workflow file.
 
-You can find an example ECS task definition in [`task-definition.example.json`](./task-definition.example.json).
+```yaml
+      - name: Deploy ECS Web container
+        id: ecs-management
+        uses: bitovi/github-actions-deploy-ecs@v1
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_default_region: ${{ env.AWS_DEFAULT_REGION }}
+          aws_resource_identifier: "service-${{ inputs.environment }}"
+          
+          aws_ecs_task_name: "service-${{ inputs.environment }}"
+          aws_ecs_task_json_definition_file: infra/service-task.json
+          aws_ecs_task_execution_role: "ecs-task-execution-role-${{ inputs.environment }}"
+          aws_ecs_task_cpu: ${{ env.TASK_CPU }}
+          aws_ecs_task_mem: ${{ env.TASK_MEM }}
+          tf_stack_destroy: ${{ inputs.tf_stack_destroy }}
+          tf_state_bucket_destroy: ${{ inputs.tf_stack_destroy }} 
+
+          # web specific
+          aws_ecs_assign_public_ip: true
+          aws_ecs_node_count: 1
+          aws_ecs_container_port: ${{ env.CONTAINER_PORT }}
+          aws_ecs_lb_port: ${{ env.LB_PORT }}
+          aws_ecs_lb_redirect_enable: true
+          aws_ecs_lb_www_to_apex_redirect: true
+
+          # CloudWatch logging
+          aws_ecs_cloudwatch_enable: true
+          aws_ecs_cloudwatch_lg_name: "/ecs/service/${{ inputs.environment }}"
+          aws_ecs_cloudwatch_retention_days: 5
+
+          # WAF settings
+          aws_waf_enable: true
+          aws_waf_logging_enable: true
+          aws_waf_log_retention_days: 3
+          aws_waf_rule_rate_limit: 400
+          aws_waf_rule_managed_rules: false
+          aws_waf_rule_managed_bad_inputs: true
+          aws_waf_rule_ip_reputation: true
+          aws_waf_rule_anonymous_ip: true
+          aws_waf_rule_bot_control: false #(Extra cost)
+          #aws_waf_rule_geo_block_countries: "US,CA"
+          aws_waf_rule_geo_allow_only_countries: "US,CA"
+          aws_waf_rule_user_arn: ${{ vars.AWS_WAF_ARN || '' }}
+          aws_waf_rule_sqli: true
+          aws_waf_rule_linux: true
+          aws_waf_rule_unix: true
+
+          aws_r53_enable: true
+          aws_r53_domain_name: ${{ vars.DOMAIN_NAME }}
+          aws_r53_enable_cert: true
+          aws_r53_root_domain_deploy: true
+```
+
+### Example Container Definition
+
+You can find an example ECS Container definition in [`container-definition.example.json`](./container-definition.example.json).
 
 # Inputs
 
