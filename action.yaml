@@ -428,7 +428,7 @@ runs:
         aws_ecs_efs_fs_id: ${{ inputs.aws_ecs_efs_fs_id }}
         aws_ecs_efs_root_directory: ${{ inputs.aws_ecs_efs_root_directory }}
         aws_ecs_efs_transit_encryption: ${{ inputs.aws_ecs_efs_transit_encryption }}
-        aws_ecs_eSfs_transit_encryption_port: ${{ inputs.aws_ecs_eSfs_transit_encryption_port }}
+        aws_ecs_efs_transit_encryption_port: ${{ inputs.aws_ecs_efs_transit_encryption_port }}
         aws_ecs_efs_access_point_id: ${{ inputs.aws_ecs_efs_access_point_id }}
         aws_ecs_efs_iam: ${{ inputs.aws_ecs_efs_iam }}
         aws_ecs_additional_tags: ${{ inputs.aws_ecs_additional_tags }}
