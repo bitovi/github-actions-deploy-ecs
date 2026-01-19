@@ -153,6 +153,24 @@ inputs:
   aws_ecs_cloudwatch_retention_days:
     description: "Number of days to retain logs. 0 to never expire. Default '14'"
     required: false
+  aws_ecs_efs_fs_id:
+    description: "ID of the EFS File System"
+    required: false
+  aws_ecs_efs_root_directory:
+    description: "Directory within the FS to mount as the root directory. Defaults to /, ignored if access_point_id defined"
+    required: false
+  aws_ecs_efs_transit_encryption:
+    description: "EFS Volume Transit Encryption. Defaults to false (DISABLED)"
+    required: false
+  aws_ecs_efs_transit_encryption_port:
+    description: "EFS Volume Transit Encryption Port"
+    required: false
+  aws_ecs_efs_access_point_id:
+    description: "EFS Volume Access Point ID to use"
+    required: false
+  aws_ecs_efs_iam:
+    description: "Whether or not to use the ECS task IAM role defined in a task definition when mounting the FS. Defaults to false. (DISABLED) "
+    required: false
   aws_ecs_additional_tags:
     description: 'A list of strings that will be added to created resources'
     required: false
@@ -407,6 +425,12 @@ runs:
         aws_ecs_cloudwatch_lg_name: ${{ inputs.aws_ecs_cloudwatch_lg_name }}
         aws_ecs_cloudwatch_skip_destroy: ${{ inputs.aws_ecs_cloudwatch_skip_destroy }}
         aws_ecs_cloudwatch_retention_days: ${{ inputs.aws_ecs_cloudwatch_retention_days }}
+        aws_ecs_efs_fs_id: ${{ inputs.aws_ecs_efs_fs_id }}
+        aws_ecs_efs_root_directory: ${{ inputs.aws_ecs_efs_root_directory }}
+        aws_ecs_efs_transit_encryption: ${{ inputs.aws_ecs_efs_transit_encryption }}
+        aws_ecs_eSfs_transit_encryption_port: ${{ inputs.aws_ecs_eSfs_transit_encryption_port }}
+        aws_ecs_efs_access_point_id: ${{ inputs.aws_ecs_efs_access_point_id }}
+        aws_ecs_efs_iam: ${{ inputs.aws_ecs_efs_iam }}
         aws_ecs_additional_tags: ${{ inputs.aws_ecs_additional_tags }}
 
         # ENV files
