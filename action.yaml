@@ -76,7 +76,13 @@ inputs:
     description: 'Toggle to ignore task definition changes after first deployment. Useful when using external tools to manage the task definition.'
     required: false
   aws_ecs_task_execution_role:
-    description: 'Elastic Container Service task execution role name from IAM. Defaults to "ecsTaskExecutionRole"'
+    description: 'Task execution role name that the Amazon ECS container agent and the Docker daemon can assume'
+    required: false
+  aws_ecs_task_role: 
+    description: 'Name of the IAM role that allows your Amazon ECS container task to make calls to other AWS services'
+    required: false
+  aws_ecs_task_reuse_role: 
+    description: 'Toggle reusing the task execution role as the task role.'
     required: false
   aws_ecs_task_json_definition_file:
     description: 'Name of the json file containing task definition. Overrides every other input.'
