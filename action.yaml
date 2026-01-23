@@ -331,6 +331,7 @@ inputs:
   aws_efs_ingress_allow_all: 
     description: 'Allow incoming traffic from 0.0.0.0/0.'
     required: false
+    default: 'false'
   aws_efs_create_replica: 
     description: 'Toggle to indiciate whether a read-only replica should be created for the EFS primary file system'
     required: false
