@@ -511,6 +511,9 @@ The following inputs can be used as `step.with` keys
 | `ecs_dns_record` | ECS DNS URL. |
 | `ecs_sg_id` | ECS SG ID. |
 | `ecs_lb_sg_id` | ECS LB SG ID. |
+| `aws_efs_fs_id` | AWS EFS FS ID of the volume. |
+| `aws_efs_replica_fs_id` | AWS EFS FS ID of the replica volume. |
+| `aws_efs_sg_id` | SG ID for the EFS Volume. |
 <hr/>
 <br/>
 

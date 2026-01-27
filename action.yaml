@@ -415,6 +415,10 @@ inputs:
     required: false
 
 outputs:
+  # VPC
+  aws_vpc_id:
+    description: 'The selected VPC ID used.'
+    value: ${{ steps.deploy.outputs.aws_vpc_id }}
   # ECS
   ecs_load_balancer_dns:
     description: "ECS ALB DNS Record"
@@ -428,6 +432,16 @@ outputs:
   ecs_lb_sg_id:
     description: "ECS LB SG ID"
     value: ${{ steps.deploy.outputs.ecs_lb_sg_id }}
+  # EFS
+  aws_efs_fs_id:
+    description: 'EFS FS ID'
+    value: ${{ steps.deploy.outputs.aws_efs_fs_id }}
+  aws_efs_replica_fs_id:
+    description: 'EFS FS Replica ID'
+    value: ${{ steps.deploy.outputs.aws_efs_replica_fs_id }}
+  aws_efs_sg_id:
+    description: 'EFS FS SG ID'
+    value: ${{ steps.deploy.outputs.aws_efs_sg_id }}
 
 runs:
   using: 'composite'
