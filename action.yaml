@@ -434,7 +434,7 @@ runs:
   steps:
     - name: Deploy with BitOps
       id: deploy
-      uses: bitovi/github-actions-commons@add_efs_to_ecs
+      uses: bitovi/github-actions-commons@v2.0.9
       with:
         # Current repo vars
         gh_action_repo: ${{ github.action_path }}
