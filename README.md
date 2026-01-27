@@ -46,6 +46,97 @@ You can **get help or ask questions** on our:
 
 Or, you can hire us for training, consulting, or development. [Set up a free consultation](https://www.bitovi.com/services/devops-consulting).
 
+# Resources diagram
+
+```mermaid
+  graph TD;
+    User[End User / Browser];
+
+    %% WAF
+    subgraph WAF["WAF"];
+        FW["WAF"];
+        WRules["WAF Rules"];
+        URules["User Rules"];
+        WRules --> FW;
+        URules --> FW;
+    end
+
+    %% Route53
+    subgraph R53["Route53"];
+        Zone["Hosted Zone<br/>bitovi.com"];
+        AppDNS["A Record<br/>example-ecs.bitovi-sandbox.com"];
+        Zone --> AppDNS;
+    end
+
+    %% ALB
+    subgraph ALB["Application Load Balancer"];
+        LB["ALB"];
+        HTTPS["Listener :443"];
+        HTTP["Listener :80<br/>Redirect → HTTPS"];
+        TG["Target Group<br/>:5678"];
+        LB --> HTTPS;
+        LB --> HTTP;
+        HTTP --> HTTPS;
+        HTTPS --> TG;
+    end
+
+    %% ACM
+    subgraph ACM["ACM"];
+        Cert["ACM Certificate<br/>example-ecs.sandbox.com"];
+        CertDNS["DNS Validation Record"];
+        Cert <--> CertDNS;
+    end
+
+    %% ECS
+    subgraph ECS["ECS (Fargate)"];
+        Task["Task Definition"];
+        Service["ECS Service"];
+        Cluster["ECS Cluster"];
+        Cluster --> Service;
+        Task --> Service;
+    end
+
+    %% IAM
+    subgraph IAM["IAM"];
+        Role["Task Execution Role"];
+        Role2["Task Role"];
+        Policy["AmazonECSTaskExecutionRolePolicy"];
+        Policy2["EFS Policy"];
+        Role --> Policy;
+        Role2 --> Policy2;
+        Role --> Task;
+        Role2 -.-> Task;
+    end
+
+    %% EFS
+    subgraph EFS["EFS Volume"];
+        EFSVolume["EFS Volume"];
+        MP["Mountpoint"];
+        Task["Task Definition"];
+        EFSVolume --> MP;
+    end
+
+    %% Security
+    subgraph SG["Security Groups"];
+        ECSSG["ECS SG<br/>5678"];
+        LBSG["ALB SG<br/>80 / 443"];
+    end
+
+    %% Traffic flow
+    User ---> AppDNS;
+    AppDNS --> LB;
+    AppDNS -.-> FW;
+    FW -.-> LB;
+    TG --> Service;
+
+    %% Attachments
+    Cert --> HTTPS;
+    ECSSG --> Service;
+    LBSG --> LB;
+    Service -.-> MP;
+    Policy2 -.-> EFSVolume;
+```
+
 # Example usage
 For basic usage, create `.github/workflows/deploy.yaml` with the following to build on push.
 
@@ -294,7 +385,6 @@ The following inputs can be used as `step.with` keys
 | `aws_ecs_cloudwatch_lg_name`| String | Log group name. Will default to `aws_identifier` if none. |
 | `aws_ecs_cloudwatch_skip_destroy`| Boolean | Toggle deletion or not when destroying the stack. |
 | `aws_ecs_cloudwatch_retention_days`| String | Number of days to retain logs. 0 to never expire. Defaults to `14`. |
-| `aws_ecs_efs_fs_id` | String | ID of the EFS File System. |
 | `aws_ecs_efs_root_directory` | String | Directory within the FS to mount as the root directory. Defaults to `/`, ignored if `access_point_id` defined. |
 | `aws_ecs_efs_transit_encryption` | Boolean | EFS Volume Transit Encryption. Defaults to `true`. (ENABLED) |
 | `aws_ecs_efs_transit_encryption_port` | String | EFS Volume Transit Encryption Port. |
@@ -434,6 +524,20 @@ In order to migrate from v0 to v1, the following path should be taken. **Expect 
 2. Bump to `v1` of the action with `aws_ecs_container_port` and `aws_ecs_lb_port` removed. Run the action.
 3. Add ports back. Run the action.
 4. Set `aws_r53_enable` to `true`, run the action. 
+
+## Adding external datastore (AWS EFS)
+Users looking to add non-ephemeral storage to their created ECS service have the following options; create a new efs as a part of the ECS deployment stack, or mounting an existing EFS. 
+
+### 1. Create EFS
+
+Option 1, set the  `aws_efs_create` to true, which will create an EFS volume for you. You'll need to enable `aws_efs_create_mount_target` or `aws_efs_create_ha` to create the mount target(s).
+
+> :warning: Be very careful here! The **EFS is fully managed by Terraform**. Therefor **it will be destroyed upon stack destruction**.
+
+### 2. Mount EFS
+Option 2, you have access to the `aws_ecs_efs_fs_id` attributes, which will make use of an existing EFS Volume. If the volume have mount targets already created, the security group should allow incoming traffic from the ECS Service. If none created or wish to handle them from within the action, clear out all mount points and enable `aws_efs_create_mount_target` or `aws_efs_create_ha`. 
+
+> When mounting an EFS volume and `aws_ecs_efs_iam` is enabled, an `aws_ecs_task_role` policy will be created for that volume if none defined. 
 
 ## Note about resource identifiers
 
