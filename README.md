@@ -1,8 +1,8 @@
 # Deploy an AWS ECS Cluster
 
-`bitovi/github-actions-deploy-ecs` Deploys a ECS Cluster.
+`bitovi/github-actions-deploy-ecs` Deploys an ECS Cluster.
 
-This action uses the new GitHub Actions Commons, that is used by many Bitovi GitHub Actions, and so it's constantly evolving and improving.
+This action uses the new GitHub Actions Commons, which is used by many Bitovi GitHub Actions, and so it's constantly evolving and improving.
 
  ⚠️ BREAKING CHANGES INTRODUCED IN V1
  Migrating from v0.1.* to v1.0.0 is possible. See [migration path](#migration-path) below.
@@ -174,7 +174,7 @@ jobs:
 
 The example below will create a cluster with 3 tasks, with cloudwatch enabled and DNS usage. 
 You'll end up with the following URL -> https://subdomain.your-domain.com
-Mapping the 2nd and 3rd container to https://subdomain.your-domain.com/apache/ and https://subdomain.your-domain.com/unit/ (Usefull for FE/BE and something extra)
+Mapping the 2nd and 3rd container to https://subdomain.your-domain.com/apache/ and https://subdomain.your-domain.com/unit/ (Useful for FE/BE and something extra)
 (Keep in mind the apache container will print a 404 as that path doesn't exist in it.)
 
 ```yaml
@@ -209,7 +209,7 @@ jobs:
         aws_ecs_container_port: 80,80,80
         aws_ecs_lb_port: 8000,8001,8082
         aws_ecs_lb_redirect_enable: true
-        aws_ecs_lb_container_path: 'apache,unit' # Fisrt container will be the URL root path
+        aws_ecs_lb_container_path: 'apache,unit' # First container will be the URL root path
         aws_ecs_lb_www_to_apex_redirect: true
 
         aws_ecs_additional_tags: '{\"key\":\"value\",\"key2\":\"value2\"}'
@@ -340,7 +340,7 @@ The following inputs can be used as `step.with` keys
 | `bitops_code_only` | Boolean | If `true`, will run only the generation phase of BitOps, where the Terraform and Ansible code is built. |
 | `bitops_code_store` | Boolean | Store BitOps generated code as a GitHub artifact. |
 | `tf_stack_destroy` | Boolean  | Set to `true` to destroy the stack - Will delete the `elb logs bucket` after the destroy action runs. |
-| `tf_state_file_name` | String | Change this to be anything you want to. Carefull to be consistent here. A missing file could trigger recreation, or stepping over destruction of non-defined objects. Defaults to `tf-state-aws`, `tf-state-ecr` or `tf-state-eks.` |
+| `tf_state_file_name` | String | Change this to be anything you want to. Careful to be consistent here. A missing file could trigger recreation, or stepping over destruction of non-defined objects. Defaults to `tf-state-aws`, `tf-state-ecr` or `tf-state-eks.` |
 | `tf_state_file_name_append` | String | Appends a string to the tf-state-file. Setting this to `unique` will generate `tf-state-aws-unique`. (Can co-exist with `tf_state_file_name`) |
 | `tf_state_bucket` | String | AWS S3 bucket name to use for Terraform state. See [note](#s3-buckets-naming) | 
 | `tf_state_bucket_destroy` | Boolean | Force purge and deletion of S3 bucket defined. Any file contained there will be destroyed. `tf_stack_destroy` must also be `true`. Default is `false`. |
@@ -368,17 +368,17 @@ The following inputs can be used as `step.with` keys
 | `aws_ecs_container_user`| String | User to run container as. Accepts `user`, `user:group`, `uid`, `uid:gid`, `user:gid` or `uid:group`. |
 | `aws_ecs_node_count`| String | Node count for ECS Cluster. |
 | `aws_ecs_app_image`| String | Name of the container image to be used. |
-| `aws_ecs_security_group_name`| String | ECS Secruity group name. |
+| `aws_ecs_security_group_name`| String | ECS Security group name. |
 | `aws_ecs_assign_public_ip`| Boolean | Assign public IP to node. |
 | `aws_ecs_container_port`| String | Comma separated list of container ports. One for each. |
-| `aws_ecs_lb_port`| String | Comma serparated list of ports exposed by the load balancer. One for each. |
+| `aws_ecs_lb_port`| String | Comma separated list of ports exposed by the load balancer. One for each. |
 | `aws_ecs_lb_redirect_enable`| String | Toggle redirect from HTTP and/or HTTPS to the main port. |
 | `aws_ecs_lb_container_path`| String | Comma separated list of paths for subsequent deployed containers. Need `aws_ecs_lb_redirect_enable` to be true. eg. api. (For http://bitovi.com/api/). If you have multiple, set them to `api,monitor,prom,,` (This example is for 6 containers) |
 | `aws_ecs_lb_ssl_policy` | String | SSL Policy for HTTPS listener in ALB. Will default to ELBSecurityPolicy-TLS13-1-2-2021-06 if none provided. See [this link](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html) for other policies. |
 | `aws_ecs_lb_www_to_apex_redirect` | Boolean | Toggle redirect from www to apex domain. `aws_r53_domain_name` must be set. Defaults to `false`. |
 | `aws_ecs_autoscaling_enable`| Boolean | Toggle ecs autoscaling policy. |
-| `aws_ecs_autoscaling_max_nodes`| String | Max ammount of nodes to scale up to. |
-| `aws_ecs_autoscaling_min_nodes`| String | Min ammount of nodes to scale down to. |
+| `aws_ecs_autoscaling_max_nodes`| String | Max amount of nodes to scale up to. |
+| `aws_ecs_autoscaling_min_nodes`| String | Min amount of nodes to scale down to. |
 | `aws_ecs_autoscaling_max_mem`| String | Define autoscaling max mem. |
 | `aws_ecs_autoscaling_max_cpu`| String | Define autoscaling max cpu. |
 | `aws_ecs_cloudwatch_enable`| Boolean | Toggle cloudwatch for ECS. Default `false`. |
@@ -445,7 +445,7 @@ The following inputs can be used as `step.with` keys
 
 
 #### **EFS Inputs**
-| Name             | Type    | Descrifption                        |
+| Name             | Type    | Description                        |
 |------------------|---------|------------------------------------|
 | `aws_efs_create` | Boolean | Toggle to indicate whether to create an EFS volume and mount it to the EC2 instance as a part of the provisioning. Note: The stack will manage the EFS and will be destroyed along with the stack. |
 | `aws_efs_fs_id` | String | ID of existing EFS volume if you wish to use an existing one. |
@@ -453,11 +453,11 @@ The following inputs can be used as `step.with` keys
 | `aws_efs_create_ha` | Boolean | Toggle to indicate whether the EFS resource should be highly available (mount points in all available zones within region). |
 | `aws_efs_vol_encrypted` | String | Toggle encryption of the EFS volume. Defaults to `true`.|
 | `aws_efs_kms_key_id` | String | The ARN for the KMS encryption key. Will use default if none defined. |
-| `aws_efs_performance_mode` | String | Toggle perfomance mode. Options are: `generalPurpose` or `maxIO`.|  
+| `aws_efs_performance_mode` | String | Toggle performance mode. Options are: `generalPurpose` or `maxIO`.|  
 | `aws_efs_throughput_mode` | String | Throughput mode for the file system. Defaults to `bursting`. Valid values: `bursting`, `provisioned`, or `elastic`. When using provisioned, also set `aws_efs_throughput_speed`. |
 | `aws_efs_throughput_speed` | String | The throughput, measured in MiB/s, that you want to provision for the file system. Only applicable with throughput_mode set to provisioned. |
 | `aws_efs_security_group_name` | String | The name of the EFS security group. Defaults to `SG for ${aws_resource_identifier} - EFS`. |
-| `aws_efs_allowed_security_groups` | String | Extra names of the security grou-ps to access the EFS volume. Accepts comma separated list of. |
+| `aws_efs_allowed_security_groups` | String | Extra names of the security groups to access the EFS volume. Accepts comma separated list of. |
 | `aws_efs_ingress_allow_all` | Boolean | Allow access from 0.0.0.0/0 in the same VPC. Defaults to `false`. |
 | `aws_efs_create_replica` | Boolean | Toggle whether a read-only replica should be created for the EFS primary file system. |
 | `aws_efs_replication_destination` | String | AWS Region to target for replication. |
@@ -535,7 +535,7 @@ Users looking to add non-ephemeral storage to their created ECS service have the
 
 Option 1, set the  `aws_efs_create` to true, which will create an EFS volume for you. You'll need to enable `aws_efs_create_mount_target` or `aws_efs_create_ha` to create the mount target(s).
 
-> :warning: Be very careful here! The **EFS is fully managed by Terraform**. Therefor **it will be destroyed upon stack destruction**.
+> :warning: Be very careful here! The **EFS is fully managed by Terraform**. Therefore **it will be destroyed upon stack destruction**.
 
 ### 2. Mount EFS
 Option 2, you have access to the `aws_ecs_efs_fs_id` attributes, which will make use of an existing EFS Volume. If the volume have mount targets already created, the security group should allow incoming traffic from the ECS Service. If none created or wish to handle them from within the action, clear out all mount points and enable `aws_efs_create_mount_target` or `aws_efs_create_ha`. 
@@ -570,9 +570,9 @@ Setting `aws_r53_create_root_cert` to `true` will create this certificate with b
 
 Setting `aws_r53_create_sub_cert` to `true` will create a certificate **just for the subdomain**, and validate it.
 
-> :warning: Be very careful here! **Created certificates are fully managed by Terraform**. Therefor **they will be destroyed upon stack destruction**.
+> :warning: Be very careful here! **Created certificates are fully managed by Terraform**. Therefore **they will be destroyed upon stack destruction**.
 
-To change a certificate (root_cert, sub_cert, ARN or pre-existing root cert), you must first set the `aws_r53_enable_cert` flag to false, run the action, then set the `aws_r53_enable_cert` flag to true, add the desired settings and excecute the action again. (**This will destroy the first certificate.**)
+To change a certificate (root_cert, sub_cert, ARN or pre-existing root cert), you must first set the `aws_r53_enable_cert` flag to false, run the action, then set the `aws_r53_enable_cert` flag to true, add the desired settings and execute the action again. (**This will destroy the first certificate.**)
 
 This is necessary due to a limitation that prevents certificates from being changed while in use by certain resources.
 

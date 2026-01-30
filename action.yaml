@@ -40,7 +40,7 @@ inputs:
     description: 'Set to "true" to Destroy the stack through Terraform.'
     required: false
   tf_state_file_name:
-    description: 'Change this to be anything you want to. Carefull to be consistent here. A missing file could trigger recreation, or stepping over destruction of non-defined objects.'
+    description: 'Change this to be anything you want to. Careful to be consistent here. A missing file could trigger recreation, or stepping over destruction of non-defined objects.'
     required: false
   tf_state_file_name_append:
     description: 'Append a string to the tf-state-file. Setting this to `unique` will generate `tf-state-aws-unique`. Can co-exist with the tf_state_file_name variable. '
@@ -112,7 +112,7 @@ inputs:
     description: 'Name of the image to be used'
     required: false
   aws_ecs_security_group_name:
-    description: 'ECS Secruity group name'
+    description: 'ECS Security group name'
     required: false
   aws_ecs_assign_public_ip:
     description: 'Assign public IP to node'
@@ -121,7 +121,7 @@ inputs:
     description: 'Comma separated list of container ports'
     required: false
   aws_ecs_lb_port:
-    description: 'Comma serparated list of ports exposed by the load balancer'
+    description: 'Comma separated list of ports exposed by the load balancer'
     required: false
   aws_ecs_lb_redirect_enable:
     description: 'Toggle redirect from HTTP and/or HTTPS to the main port.'
@@ -139,16 +139,16 @@ inputs:
     description: 'Toggle ecs autoscaling policy'
     required: false
   aws_ecs_autoscaling_max_nodes:
-    description: 'Max ammount of nodes to scale up to.'
+    description: 'Max amount of nodes to scale up to.'
     required: false
   aws_ecs_autoscaling_min_nodes:
-    description: 'Min ammount of nodes to scale down to.'
+    description: 'Min amount of nodes to scale down to.'
     required: false
   aws_ecs_autoscaling_max_mem:
-    description: 'Max ammount of mem to scale up to.'
+    description: 'Max amount of mem to scale up to.'
     required: false
   aws_ecs_autoscaling_max_cpu:
-    description: 'Max ammount of cou to scale up to.'
+    description: 'Max amount of cpu to scale up to.'
     required: false
   aws_ecs_cloudwatch_enable:
     description: 'Toggle cloudwatch for ECS. Defaults to false'
@@ -298,7 +298,7 @@ inputs:
 
   # AWS EFS
   aws_efs_create: 
-    description: 'Toggle to indicate whether to create and EFS volume as a part of the provisioning. Note: The EFS will be managed by the stack and will be destroyed along with the stack.'
+    description: 'Toggle to indicate whether to create an EFS volume as a part of the provisioning. Note: The EFS will be managed by the stack and will be destroyed along with the stack.'
     required: false
   aws_efs_create_mount_target: 
     description: 'Toggle to indicate whether we should create a mount target for the EFS volume. Accepts incoming FS ID with no mount targets too.'
@@ -314,7 +314,7 @@ inputs:
     description: 'The ARN for the KMS encryption key. Default key will be used if none defined.'
     required: false
   aws_efs_performance_mode: 
-    description: 'Toggle perfomance mode. Options are: generalPurpose or maxIO.'
+    description: 'Toggle performance mode. Options are: generalPurpose or maxIO.'
     required: false
   aws_efs_throughput_mode: 
     description: 'Throughput mode for the file system. Defaults to bursting. Valid values: bursting, provisioned, or elastic. When using provisioned, also set provisioned_throughput_in_mibps.'
@@ -333,13 +333,13 @@ inputs:
     required: false
     default: 'false'
   aws_efs_create_replica: 
-    description: 'Toggle to indiciate whether a read-only replica should be created for the EFS primary file system'
+    description: 'Toggle to indicate whether a read-only replica should be created for the EFS primary file system'
     required: false
   aws_efs_replication_destination: 
     description: 'AWS Region to target for replication'
     required: false
   aws_efs_enable_backup_policy: 
-    description: 'Toggle to indiciate whether the EFS should have a backup policy, default is `false`'
+    description: 'Toggle to indicate whether the EFS should have a backup policy, default is `false`'
     required: false
   aws_efs_transition_to_inactive: 
     description: 'https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/efs_file_system#transition_to_ia'
@@ -386,7 +386,7 @@ inputs:
     description: 'A JSON object of additional tags that will be included on created resources. Example: `{"key1": "value1", "key2": "value2"}`'
     required: false
 
-  # AWS Route53 Domains abd Certificates
+  # AWS Route53 Domains and Certificates
   aws_r53_enable:
     description: 'Enables the usage of Route53 to manage DNS records.'
     required: false
@@ -396,7 +396,7 @@ inputs:
   aws_r53_sub_domain_name:
     description: 'Define the sub-domain part of the URL. Defaults to `${org}-${repo}-{branch}`'
   aws_r53_root_domain_deploy:
-    description: 'Deploy to root domain. Will generate two DNS recrods, one for root, another for www'
+    description: 'Deploy to root domain. Will generate two DNS records, one for root, another for www'
     required: false
   aws_r53_enable_cert:
     description: 'Makes the application use a certificate by enabling a certificate lookup.'
